@@ -4,7 +4,75 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PGM Extrema</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// ===== UPLOAD DE DOCUMENTOS =====
+const SBU="https://ugioavmdfzajsarvlbtf.supabase.co",SBK="sb_publishable_G2P6G2eHLqix33TomxNWCA_9JyUuc8C";
+
+async function upDoc(file, refId, refTipo) {
+  if(!file) return null;
+  const ext = file.name.split('.').pop();
+  const path = refTipo+'/'+refId+'/'+Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9.-]/g,'_');
+  // Upload to storage
+  const fd = new FormData(); fd.append('',file);
+  const r = await fetch(SBU+'/storage/v1/object/documentos/'+path,{
+    method:'POST', headers:{'apikey':SBK,'Authorization':'Bearer '+SBK},
+    body: file
+  });
+  if(!r.ok) { const e=await r.text(); console.error('Upload err:',e); ntf('Erro no upload: '+r.status,'#e05c5c'); return null; }
+  const url = SBU+'/storage/v1/object/public/documentos/'+path;
+  // Save to documentos table
+  await SB.from('documentos').insert({
+    nome: file.name, url: url, tamanho: file.size,
+    tipo: file.type, referencia_id: refId, referencia_tipo: refTipo,
+    criado_por: S&&S.d&&S.d.nome
+  });
+  return url;
+}
+
+async function handleUpload(inputId, refId, refTipo, listId) {
+  const inp = document.getElementById(inputId);
+  if(!inp || !inp.files || !inp.files.length) return;
+  const area = inp.closest('.upload-area');
+  if(area) area.classList.add('uploading');
+  ntf('Enviando arquivo...');
+  for(const file of inp.files) {
+    await upDoc(file, refId, refTipo);
+  }
+  ntf('Arquivo enviado!', '#4caf82');
+  if(area) area.classList.remove('uploading');
+  if(listId) await loadDocs(refId, refTipo, listId);
+}
+
+async function loadDocs(refId, refTipo, containerId) {
+  const {data} = await SB.from('documentos').select('*')
+    .eq('referencia_id', refId).eq('referencia_tipo', refTipo)
+    .order('criado_em',{ascending:false});
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  if(!data || !data.length) { el.innerHTML='<p style="font-size:11px;color:var(--gray);margin-top:6px">Nenhum anexo</p>'; return; }
+  el.innerHTML = data.map(d=>{
+    const sz = d.tamanho ? (d.tamanho>1048576?(d.tamanho/1048576).toFixed(1)+'MB':(d.tamanho/1024).toFixed(0)+'KB') : '';
+    return '<div class="doc-item"><a href="'+d.url+'" target="_blank">📎 '+d.nome+'</a><span class="doc-sz">'+sz+'</span><button class="doc-del" title="Remover" data-id="'+d.id+'" onclick="delDoc(this.dataset.id,''+refId+'',''+refTipo+'',''+containerId+'')">×</button></div>';
+  }).join('');
+}
+
+async function delDoc(docId, refId, refTipo, containerId) {
+  if(!confirm('Remover este anexo?')) return;
+  await SB.from('documentos').delete().eq('id', docId);
+  ntf('Anexo removido');
+  await loadDocs(refId, refTipo, containerId);
+}
+
+function uploadWidget(refId, refTipo, inputSuffix) {
+  const uid = '_upl_'+inputSuffix;
+  const lid = '_docs_'+inputSuffix;
+  // Load docs after widget renders
+  setTimeout(() => loadDocs(refId, refTipo, lid), 100);
+  return '<div style="margin-top:14px"><div style="font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Anexos</div>'+
+    '<label class="upload-area"><div class="ico">📎</div><p>Clique para anexar arquivo</p><input type="file" id="'+uid+'" multiple onchange="handleUpload(''+uid+'',''+refId+'',''+refTipo+'',''+lid+'')"></label>'+
+    '<div id="'+lid+'"></div></div>';
+}
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:sans-serif;background:#0d1b2a;color:#f0ece3;min-height:100vh}
@@ -73,6 +141,18 @@ td{padding:11px 14px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04
 #ld{position:fixed;inset:0;background:#0d1b2a;display:flex;align-items:center;justify-content:center;z-index:999}
 .sp{width:36px;height:36px;border:3px solid rgba(201,168,76,.2);border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+.upload-area{border:2px dashed rgba(201,168,76,.4);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:.2s;margin-top:10px}
+.upload-area:hover{border-color:var(--g);background:rgba(201,168,76,.05)}
+.upload-area input{display:none}
+.upload-area p{font-size:12px;color:var(--gray);margin:0}
+.upload-area .ico{font-size:24px;margin-bottom:6px}
+.doc-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:7px;margin-top:6px}
+.doc-item a{color:#4a90d9;font-size:12px;text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.doc-item a:hover{text-decoration:underline}
+.doc-item .doc-del{background:none;border:none;color:#e05c5c;cursor:pointer;font-size:14px;flex-shrink:0}
+.doc-item .doc-sz{font-size:10px;color:var(--gray);flex-shrink:0}
+.uploading{opacity:.6;pointer-events:none}
 </style>
 </head>
 <body>
