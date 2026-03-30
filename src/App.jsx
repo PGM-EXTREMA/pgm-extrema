@@ -48,7 +48,7 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={{ session, perfil, logout: handleLogout }}>
-      {statesession ? (
+      {!session ? (
         <Login onLogin={handleLogin} />
       ) : perfil?.tipo === 'secretaria' ? (
         <PortalSecretaria />
