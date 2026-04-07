@@ -244,8 +244,8 @@ if(!isPGM2){
   localStorage.setItem(lastKey,new Date().toISOString());
 }
 nv("dash")}
-function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0}]:[]),{id:"recibo",l:"Protocolo Fisico"},{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"}];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
-async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
+function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0},{id:"gerador",l:"Gerador de Docs"}]:[]),{id:"recibo",l:"Protocolo Fisico"},{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"}];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
+async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="gerador")rGerador(c);else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
 async function rl(){await lA();bN();await nv(V)}
 const SM={recebido:["#c9a84c","Recebido"],em_analise:["#4a90d9","Em Analise"],em_andamento:["#e09440","Em Andamento"],respondido:["#4caf82","Respondido"],arquivado:["#8a9bb0","Arquivado"]};
 function rD(el){const s=[{l:"Protocolos Pendentes",v:D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length,c:"#c9a84c",w:"prot"},{l:"Demandas Ativas",v:D.d.filter(x=>x.status!=="concluida").length,c:"#4a90d9",w:"dem"},{l:"Judiciais Ativos",v:D.j.filter(x=>x.fase!=="encerrado").length,c:"#9b59b6",w:"jud"},{l:"Contratos Vigentes",v:D.c.filter(x=>x.status==="vigente").length,c:"#4caf82",w:"con"},{l:"Pareceres",v:D.pr.length,c:"#e09440",w:"par"},{l:"Vencendo 30d",v:D.c.filter(x=>{const r=dl(x.fim);return x.status==="vigente"&&r!==null&&r<=30}).length,c:"#e05c5c",w:"con"}];const ph=D.p.length===0?"<p style=\"text-align:center;padding:24px;color:var(--gray)\">Nenhum protocolo</p>":D.p.slice(0,6).map(p=>{const cx={recebido:"#c9a84c",em_analise:"#4a90d9",respondido:"#4caf82",arquivado:"#8a9bb0",em_andamento:"#e09440"}[p.status]||"#c9a84c";return"<div style=\"display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid rgba(255,255,255,.04)\"><div style=\"width:7px;height:7px;border-radius:50%;background:"+cx+";flex-shrink:0\"></div><div><div style=\"font-size:12px;font-weight:500\">"+(p.titulo||"").slice(0,40)+"</div><div style=\"font-size:10px;color:var(--gray)\">"+(p.secretaria&&p.secretaria.sigla||"")+"</div></div></div>"}).join("");el.innerHTML="<div class=\"tb\"><div><h2>Painel de Controle</h2><p>"+new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})+"</p></div></div><div class=\"pb\"><div class=\"sg\">"+s.map(x=>"<div class=\"cd\" data-w=\""+x.w+"\" onclick=\"nv(this.dataset.w)\" style=\"border-top:3px solid "+x.c+"\"><div style=\"font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px\">"+x.l+"</div><div style=\"font-size:28px;font-weight:700;color:"+x.c+"\">"+x.v+"</div></div>").join("")+"</div><div class=\"tw\" style=\"margin-top:18px\"><div style=\"padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06)\"><strong>Protocolos Recentes</strong></div>"+ph+"</div></div>"}
@@ -607,6 +607,276 @@ async function trfDem(demId){
   await lA();
   ntf("Demanda transferida para "+aName+"!");
   nv("mdem");
+}
+function rGerador(el){
+el.innerHTML='<div class="tb"><div><h2>Gerador de Documentos</h2><p>Portarias, Decretos, Procurações e Ofícios</p></div></div>'+
+'<div class="pb" id="gdoc-root" style="padding:0"></div>';
+// Load docx library if not loaded
+function initGerador(){
+var root=document.getElementById("gdoc-root");
+root.innerHTML=buildGeradorHTML();
+window._gDoc="nomeacao";
+window._gPrev="";
+window._gAI="";
+window._gSrvN=0;
+gSelectDoc("nomeacao");
+}
+if(typeof docx==="undefined"){
+var s=document.createElement("script");
+s.src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js";
+s.onload=initGerador;
+document.head.appendChild(s);
+}else{initGerador();}
+}
+function buildGeradorHTML(){
+return '<div style="display:grid;grid-template-columns:240px 1fr;gap:0;min-height:600px">'+
+'<div style="background:#12202f;border-right:1px solid rgba(255,255,255,.06);padding:20px 16px;display:flex;flex-direction:column;gap:8px">'+
+'<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.35);font-weight:700;margin-bottom:6px">Tipo de Documento</div>'+
+["nomeacao","exoneracao","pae","decreto","procuracao","oficio"].map(function(t){
+var labels={nomeacao:"📋 Portaria de Nomeação",exoneracao:"📋 Portaria de Exoneração",pae:"📋 Portaria de PAE",decreto:"📜 Decreto",procuracao:"⚖ Procuração Ad Judicia",oficio:"✉ Ofício"};
+var descs={nomeacao:"Cargo em comissão / função",exoneracao:"Cargo efetivo, comissão ou confiança",pae:"Processo Administrativo Especial",decreto:"Decreto municipal",procuracao:"Representação judicial",oficio:"Correspondência oficial"};
+return '<button id="gbtndoc-'+t+'" onclick="gSelectDoc(\'"+t+"\')" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:11px 13px;cursor:pointer;text-align:left;color:#f0ece3;width:100%;transition:all .15s">'+
+'<div style="font-size:12px;font-weight:600">'+labels[t]+"</div>"+
+'<div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">'+descs[t]+"</div></button>";
+}).join("")+
+"</div>"+
+'<div style="padding:24px;display:flex;flex-direction:column;gap:18px">'+
+'<div id="gdoc-form" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px"></div>'+
+'<div style="background:rgba(46,117,182,.06);border:1px solid rgba(46,117,182,.2);border-radius:10px;padding:16px">'+
+'<div style="font-size:11px;color:#4a90d9;font-weight:700;text-transform:uppercase;margin-bottom:8px">🤖 Revisão por IA (opcional)</div>'+
+'<textarea id="gdoc-aiprompt" rows="3" placeholder="Ex: Adicione um considerando sobre CI 28/2026. Altere data do inciso I para 15/04..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#f0ece3;font-size:12px;font-family:inherit;resize:vertical;outline:none"></textarea>'+
+'<div id="gdoc-airesult" style="display:none;margin-top:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;font-size:12px;line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto"></div>'+
+'<button onclick="gReviewAI()" style="margin-top:10px;background:rgba(46,117,182,.2);color:#4a90d9;border:1px solid rgba(46,117,182,.4);border-radius:7px;padding:9px 18px;cursor:pointer;font-size:12px;font-weight:700">🤖 Aplicar revisão por IA</button>'+
+"</div>"+
+'<div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px">'+
+'<div style="font-size:11px;color:#c9a84c;font-weight:700;text-transform:uppercase;margin-bottom:12px">👁 Preview & Download</div>'+
+'<div style="display:flex;gap:10px;margin-bottom:14px">'+
+'<button onclick="gPreview()" style="background:#c9a84c;color:#0f1923;border:none;border-radius:7px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer">👁 Gerar Preview</button>'+
+'<button id="gdoc-dlbtn" onclick="gDownload()" disabled style="background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.35);border-radius:7px;padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer">📥 Baixar .docx</button>'+
+"</div>"+
+'<div id="gdoc-preview" style="display:none;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;max-height:400px;overflow-y:auto"></div>'+
+"</div></div></div>";
+}
+var gForms={
+nomeacao:function(){
+return '<div style="font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:14px">Portaria de Nomeação</div>'+
+gRow([gFld("Número da Portaria","<input id=_fn type=number placeholder='Ex: 317'>"),gFld("Data","<input id=_fd type=date value='"+gToday()+"'>")])+ 
+gRow([gFldF("Ementa","<input id=_fe value='Dispõe sobre a nomeação de servidores para cargos de provimento em comissão no âmbito da Administração Pública Municipal.'>")])+ 
+gRow([gFldF("Considerandos (um por linha)","<textarea id=_fc rows=3 placeholder='Ex: a Comunicação Interna nº 28/2026...'></textarea>")])+ 
+'<div style="margin-top:14px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);font-weight:700;margin-bottom:8px">Servidores Nomeados</div>'+
+'<div id="gsrvs"></div>'+
+'<button onclick="gAddSrv()" style="background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.4);border-radius:8px;padding:9px;color:#c9a84c;cursor:pointer;width:100%;font-size:12px;font-weight:700">+ Adicionar Servidor</button></div>';
+},
+exoneracao:function(){
+return '<div style="font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:14px">Portaria de Exoneração</div>'+
+gRow([gFld("Número","<input id=_fn type=number placeholder='Ex: 319'>"),gFld("Data","<input id=_fd type=date value='"+gToday()+"'>")])+ 
+gRow([gFldF("Ementa","<input id=_fe value='Dispõe sobre a exoneração de servidores no âmbito da Administração Pública Municipal, e dá outras providências.'>")])+ 
+gRow([gFldF("Considerandos","<textarea id=_fc rows=3 placeholder='Ex: os Ofícios nº 142/2026 e 143/2026...'></textarea>")])+ 
+'<div style="margin-top:14px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);font-weight:700;margin-bottom:8px">Servidores Exonerados</div>'+
+'<div id="gsrvs"></div>'+
+'<button onclick="gAddSrv()" style="background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.4);border-radius:8px;padding:9px;color:#c9a84c;cursor:pointer;width:100%;font-size:12px;font-weight:700">+ Adicionar Servidor</button></div>';
+},
+pae:function(){
+return '<div style="font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:14px">Portaria de PAE</div>'+
+gRow([gFld("Número","<input id=_fn type=number placeholder='Ex: 318'>"),gFld("Data","<input id=_fd type=date value='"+gToday()+"'>")])+ 
+gRow([gFldF("Ementa","<input id=_fe value='Determina a instauração de Processo Administrativo Especial para apuração de fatos e responsabilidades, e dá outras providências.'>")])+ 
+gRow([gFld("Nº Boletim de Ocorrência","<input id=_fbo placeholder='Ex: 2026-013584712-001'>"),gFld("Secretaria Envolvida","<input id=_fsec placeholder='Ex: Secretaria Municipal de Obras'>")])+ 
+gRow([gFldF("Descrição do Fato (Art. 1º)","<textarea id=_ffato rows=4 placeholder='Descreva o fato, local e dano...'></textarea>")])+ 
+gRow([gFldF("Considerandos Adicionais","<textarea id=_fc rows=3></textarea>")]);
+},
+decreto:function(){
+return '<div style="font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:14px">Decreto</div>'+
+gRow([gFld("Número do Decreto","<input id=_fn placeholder='Ex: 5.104'>"),gFld("Data","<input id=_fd type=date value='"+gToday()+"'>")])+ 
+gRow([gFldF("Ementa","<input id=_fe placeholder='Ex: Institui a Política Municipal de X...'>")])+ 
+gRow([gFldF("Considerandos","<textarea id=_fc rows=4 placeholder='Um por linha...'></textarea>")])+ 
+gRow([gFldF("Artigos do Decreto","<textarea id=_fartigos rows=6 placeholder='Art. 1º – ...\nArt. 2º – ...\nArt. 3º – Este Decreto entra em vigor na data de sua publicação.'></textarea>")]);
+},
+procuracao:function(){
+return '<div style="font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:14px">Procuração Ad Judicia</div>'+
+gRow([gFld("Data","<input id=_fd type=date value='"+gToday()+"'>")])+ 
+gRow([gFld("Número do Processo","<input id=_fproc placeholder='Ex: 5005562-17.2025.8.13.0251'>"),gFldF("Vara / Juízo","<input id=_fvara placeholder='Ex: 2ª VARA CÍVEL DA COMARCA DE EXTREMA/MG'>")])+ 
+gRow([gFldF("Parte Contrária","<input id=_fparte placeholder='Ex: COMPANHIA DE SANEAMENTO DE MINAS GERAIS – COPASA MG'>")])+ 
+gRow([gFldF("Advogados (um por linha)","<textarea id=_fadvs rows=5>Bruno Bertolotti, Procurador Geral do Município, OAB/MG 206.199\nNatanael Jairo Cazzo, OAB/MG 140.842\nLucas Mendes Clemonte, OAB/MG 186.907\nFelipe José Faria do Nascimento, OAB/MG 221.039\nMayara Cardoso de Oliveira, OAB/MG 231.355</textarea>")]);
+},
+oficio:function(){
+return '<div style="font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:14px">Ofício</div>'+
+gRow([gFld("Número","<input id=_fn placeholder='Ex: 138/2026'>"),gFld("Data","<input id=_fd type=date value='"+gToday()+"'>")])+ 
+gRow([gFldF("Destinatário","<input id=_fdest placeholder='Ex: Ilmo. Sr. Secretário Municipal de Educação'>")])+ 
+gRow([gFldF("Assunto","<input id=_fassunto placeholder='Ex: Solicitação de informações...'>")])+ 
+gRow([gFldF("Corpo do Ofício","<textarea id=_fcorpo rows=8 placeholder='Texto do ofício...'></textarea>")]);
+}
+};
+function gFld(lbl,inp){return '<div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.45);font-weight:600">'+lbl+"</label>"+inp.replace(/<(input|select|textarea)/g,'<$1 style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;color:#f0ece3;font-size:12px;font-family:inherit;outline:none;width:100%"')+'</div>';}
+function gFldF(lbl,inp){return '<div style="display:flex;flex-direction:column;gap:4px;grid-column:1/-1"><label style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.45);font-weight:600">'+lbl+"</label>"+inp.replace(/<(input|select|textarea)/g,'<$1 style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;color:#f0ece3;font-size:12px;font-family:inherit;outline:none;width:100%"')+'</div>';}
+function gRow(cols){return '<div style="display:grid;grid-template-columns:'+cols.map(function(){return "1fr";}).join(" ")+';gap:10px;margin-bottom:10px">'+cols.join("")+"</div>";}
+function gToday(){return new Date().toISOString().split("T")[0];}
+function gDatePT(iso){if(!iso)return"";var p=iso.split("-");var m=["","janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];return parseInt(p[2])+" de "+m[parseInt(p[1])]+" de "+p[0];}
+function gVal(id){var e=document.getElementById(id);return e?e.value.trim:"";}
+function gV(id){var e=document.getElementById(id);return e?e.value.trim():""}
+function gSelectDoc(t){
+window._gDoc=t;
+window._gPrev="";
+window._gAI="";
+window._gSrvN=0;
+document.querySelectorAll("[id^=gbtndoc-]").forEach(function(b){b.style.borderColor="rgba(255,255,255,.07)";b.style.background="rgba(255,255,255,.03)";});
+var btn=document.getElementById("gbtndoc-"+t);
+if(btn){btn.style.borderColor="#c9a84c";btn.style.background="#1f2e42";}
+var form=document.getElementById("gdoc-form");
+if(form&&gForms[t]) form.innerHTML=gForms[t]();
+var prev=document.getElementById("gdoc-preview");
+if(prev) prev.style.display="none";
+var dl=document.getElementById("gdoc-dlbtn");
+if(dl) dl.disabled=true;
+if((t==="nomeacao"||t==="exoneracao")&&document.getElementById("gsrvs")) gAddSrv();
+}
+function gAddSrv(){
+var t=window._gDoc;
+var container=document.getElementById("gsrvs");
+if(!container)return;
+window._gSrvN++;
+var n=window._gSrvN;
+var roms=["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+var idx=roms[container.children.length]||"?";
+var div=document.createElement("div");
+div.id="gsrv"+n;
+div.style.cssText="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;margin-bottom:8px;position:relative";
+if(t==="nomeacao"){
+div.innerHTML='<div style="font-size:10px;color:#c9a84c;font-weight:700;text-transform:uppercase;margin-bottom:8px">'+idx+" – Servidor</div>"+
+"<button onclick=\"document.getElementById('gsrv"+n+"').remove()\" style=\"position:absolute;top:8px;right:8px;background:rgba(224,92,92,.15);border:1px solid rgba(224,92,92,.3);color:#e05c5c;border-radius:5px;padding:2px 7px;cursor:pointer;font-size:11px\">✕</button>"+
+gRow([gFldF("Nome Completo (maiúsculas)","<input class=gnome placeholder='Ex: DANIELA MORAIS BARROS'>")])+
+gRow([gFld("CPF (mascarado)","<input class=gcpf placeholder='Ex: ***.356.94*-**'>"),gFld("Função / Cargo","<input class=gfunc placeholder='Ex: Chefe de Divisão'>")])+
+gRow([gFldF("Secretaria","<input class=gsec placeholder='Ex: Secretaria Municipal de Meio Ambiente'>")])+
+gRow([gFld("Data de Efeito","<input class=gefeito type=date>")]);
+}else{
+div.innerHTML='<div style="font-size:10px;color:#c9a84c;font-weight:700;text-transform:uppercase;margin-bottom:8px">'+idx+" – Servidor</div>"+
+"<button onclick=\"document.getElementById('gsrv"+n+"').remove()\" style=\"position:absolute;top:8px;right:8px;background:rgba(224,92,92,.15);border:1px solid rgba(224,92,92,.3);color:#e05c5c;border-radius:5px;padding:2px 7px;cursor:pointer;font-size:11px\">✕</button>"+
+gRow([gFldF("Nome Completo (maiúsculas)","<input class=gnome placeholder='Ex: ANDRE APARECIDO BORGES'>")])+
+gRow([gFld("Tipo","<select class=gtipo><option value='cargo efetivo'>Cargo Efetivo</option><option value='cargo em comissão'>Cargo em Comissão</option><option value='função de confiança'>Função de Confiança</option></select>"),gFld("A pedido?","<select class=gpedido><option value=sim>Sim</option><option value=nao>Não</option></select>")])+
+gRow([gFld("Cargo / Função","<input class=gfunc placeholder='Ex: Agente da Dengue'>"),gFld("Data de Efeito","<input class=gefeito type=date>")])+
+gRow([gFldF("Secretaria","<input class=gsec placeholder='Ex: Secretaria Municipal de Saúde'>")]);
+}
+container.appendChild(div);
+}
+function gBuildText(){
+var t=window._gDoc;
+var num=gV("_fn"),dt=gDatePT(gV("_fd")),em=gV("_fe"),co=gV("_fc");
+var roms=["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+var considerandos=co?co.split("\n").filter(function(l){return l.trim();}).map(function(l){return"CONSIDERANDO "+l.trim();}).join("\n\n"):"CONSIDERANDO a solicitação formulada pela Administração Municipal;";
+if(t==="nomeacao"){
+var rows=Array.from(document.querySelectorAll("#gsrvs .gnome")||[]);
+var srvs=Array.from(document.getElementById("gsrvs").querySelectorAll("[id^=gsrv]")).map(function(r,i){
+var nome=r.querySelector(".gnome").value.trim();
+var cpf=r.querySelector(".gcpf").value.trim();
+var func=r.querySelector(".gfunc").value.trim();
+var sec=r.querySelector(".gsec").value.trim();
+var ef=r.querySelector(".gefeito").value?gDatePT(r.querySelector(".gefeito").value):"";
+return roms[i]+" – "+nome+", inscrit"+(nome.slice(-1)==="A"?"a":"o")+" no CPF nº "+cpf+", para exercer a função de "+func+", vinculad"+(func.toLowerCase().includes("coordenador")||func.toLowerCase().includes("secretari")?"a":"o")+" à "+sec+", com efeitos a partir de "+ef+";";
+}).join("\n\n");
+return "PORTARIA Nº. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+considerandos+"\n\nO PREFEITO DO MUNICÍPIO DE EXTREMA, Senhor Fabrício Sanchez Bergamin, no uso de suas atribuições legais,\n\nDETERMINA:\n\nArt. 1º – Ficam nomeados para os cargos em comissão os seguintes servidores:\n\n"+srvs+"\n\nArt. 2º – Esta Portaria entra em vigor na data de sua publicação, produzindo efeitos nas datas específicas indicadas em cada dispositivo, ficando revogadas as disposições em contrário.\n\nFabrício Sanchez Bergamin\n- Prefeito Municipal -";
+}
+if(t==="exoneracao"){
+var srvs2=Array.from(document.getElementById("gsrvs").querySelectorAll("[id^=gsrv]")).map(function(r,i){
+var nome=r.querySelector(".gnome").value.trim();
+var tipo=r.querySelector(".gtipo").value;
+var func=r.querySelector(".gfunc").value.trim();
+var sec=r.querySelector(".gsec").value.trim();
+var ped=r.querySelector(".gpedido").value;
+var ef=r.querySelector(".gefeito").value?gDatePT(r.querySelector(".gefeito").value):"";
+var pedStr=ped==="sim"?", a pedido,":"";
+return roms[i]+" – "+nome+pedStr+", do cargo de "+func+", lotad"+(nome.slice(-1)==="A"?"a":"o")+" na "+sec+", com efeitos a partir de "+ef+";";
+}).join("\n\n");
+return "PORTARIA Nº. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+considerandos+"\n\nO PREFEITO DO MUNICÍPIO DE EXTREMA, Senhor Fabrício Sanchez Bergamin, no uso de suas atribuições legais,\n\nDETERMINA:\n\nArt. 1º – Ficam exonerados os seguintes servidores:\n\n"+srvs2+"\n\nArt. 2º – Esta Portaria entra em vigor na data de sua publicação, produzindo efeitos nas datas especificadas em cada dispositivo, revogadas as disposições em contrário.\n\nFabrício Sanchez Bergamin\n- Prefeito Municipal -";
+}
+if(t==="pae"){
+var bo=gV("_fbo"),sec=gV("_fsec"),fato=gV("_ffato");
+var boLine=bo?"\n\nCONSIDERANDO o Boletim de Ocorrência nº "+bo+";":" ";
+return "PORTARIA Nº. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\nCONSIDERANDO o relato circunstanciado da ocorrência envolvendo servidor municipal, lotado na "+sec+";"+boLine+"\n\nCONSIDERANDO que os fatos demandam apuração quanto às circunstâncias e à eventual responsabilidade dos envolvidos;\n\nCONSIDERANDO a necessidade de assegurar o devido processo legal, a ampla defesa e o contraditório, em estrita observância aos princípios constitucionais que regem a Administração Pública;\n\nO PREFEITO DO MUNICÍPIO DE EXTREMA, Senhor Fabrício Sanchez Bergamin, no uso de suas atribuições legais,\n\nDETERMINA:\n\nArt. 1º – Fica instaurado Processo Administrativo Especial – PAE, com a finalidade de apurar os fatos, as circunstâncias e as eventuais responsabilidades administrativas decorrentes de "+fato+"\n\n§ 1º – A condução do presente Processo Administrativo Especial ficará a cargo da Procuradoria Geral do Município, nos termos da Lei Complementar Municipal nº 126/2017.\n\n§ 2º – Na condução do processo, deverão ser rigorosamente observados os preceitos constitucionais do contraditório e da ampla defesa.\n\nArt. 2º – Revogadas as disposições em contrário, esta Portaria entra em vigor na data de sua publicação.\n\nFabrício Sanchez Bergamin\nPrefeito Municipal";
+}
+if(t==="decreto"){
+var artigos=gV("_fartigos")||"Art. 1º – ...\n\nArt. 2º – Este Decreto entra em vigor na data de sua publicação.";
+return "DECRETO Nº. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+considerandos+"\n\nO PREFEITO DO MUNICÍPIO DE EXTREMA, Senhor Fabrício Sanchez Bergamin, no uso de suas atribuições legais,\n\nDECRETA:\n\n"+artigos+"\n\nFabrício Sanchez Bergamin\n- Prefeito Municipal -";
+}
+if(t==="procuracao"){
+var proc=gV("_fproc"),parte=gV("_fparte"),vara=gV("_fvara");
+var advs=gV("_fadvs").split("\n").filter(function(l){return l.trim();}).join("; ");
+return "PROCURAÇÃO \"AD JUDICIA\"\n\nMUNICÍPIO DE EXTREMA, pessoa jurídica de direito público interno, inscrita no CNPJ do MF sob n.º 18.677.591/0001-00, situada na Avenida Delegado Waldemar Gomes Pinto, 1.624, Ponte Nova, Município de Extrema, Estado de Minas Gerais, CEP 37.640-000, neste ato representado pelo Prefeito Municipal, Fabrício Sanchez Bergamin, brasileiro, casado, inscrito no CPF n°. 311.850.858-23, nomeia e constitui como procuradores os advogados: "+advs+".\n\nA quem confere amplos poderes para o foro em geral, com a cláusula \"ad judicia\", em qualquer juízo, instância ou Tribunal, podendo propor contra quem de direito as ações competentes e defendê-lo nas contrárias, seguindo umas e outras, até final decisão, usando os recursos legais e acompanhando-os, podendo ainda substabelecer a outrem, com ou sem reservas de iguais poderes, dando tudo por bom, firme e valioso.\n\nEspecialmente para atuar nos autos do processo nº "+proc+" que lhe move "+parte+", processo em trâmite perante "+vara+".\n\nExtrema, "+dt+".\n\nFabrício Sanchez Bergamin\nPrefeito Municipal";
+}
+if(t==="oficio"){
+var dest=gV("_fdest"),assunto=gV("_fassunto"),corpo=gV("_fcorpo");
+return "OFÍCIO Nº "+num+"\n\nExtrema, "+dt+".\n\n"+dest+"\n\nAssunto: "+assunto+"\n\nSenhor(a),\n\n"+corpo+"\n\nAtenciosamente,\n\nBruno Bertolotti\nProcurador-Geral do Município de Extrema – MG\nOAB/MG 206.199";
+}
+return "";
+}
+function gPreview(){
+var txt=window._gAI||gBuildText();
+window._gPrev=txt;
+var box=document.getElementById("gdoc-preview");
+if(!box)return;
+box.innerHTML='<div style="text-align:center;font-weight:700;color:#c9a84c;margin-bottom:12px;font-size:13px">PREFEITURA MUNICIPAL DE EXTREMA — MG</div>'+txt.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
+box.style.display="block";
+var dl=document.getElementById("gdoc-dlbtn");
+if(dl)dl.disabled=false;
+ntf("Preview gerado!");
+}
+async function gReviewAI(){
+var prompt=document.getElementById("gdoc-aiprompt").value.trim();
+if(!prompt){ntf("Descreva o que ajustar.");return;}
+var base=window._gPrev||gBuildText();
+if(!base){ntf("Gere o preview primeiro.");return;}
+ntf("Consultando IA...");
+try{
+var resp=await fetch("https://api.anthropic.com/v1/messages",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+model:"claude-sonnet-4-20250514",max_tokens:2000,
+system:"Você é um assistente jurídico especializado em documentos oficiais da Prefeitura de Extrema - MG. Retorne SOMENTE o documento completo revisado, sem explicações, sem markdown. Mantenha o estilo formal e as fórmulas padrão do documento.",
+messages:[{role:"user",content:"Documento atual:\n\n"+base+"\n\n---\nAjuste solicitado: "+prompt}]
+})
+});
+var data=await resp.json();
+var result=data.content&&data.content[0]&&data.content[0].text;
+if(!result)throw new Error("Sem resposta");
+window._gAI=result;
+window._gPrev=result;
+var box=document.getElementById("gdoc-airesult");
+if(box){box.textContent=result;box.style.display="block";}
+gPreview();
+ntf("Revisão aplicada pela IA!");
+}catch(e){ntf("Erro IA: "+e.message);}
+}
+async function gDownload(){
+var txt=window._gPrev;
+if(!txt){ntf("Gere o preview primeiro.");return;}
+var D2=docx;
+var lines=txt.split("\n");
+var children=[];
+var AT=D2.AlignmentType;
+function par(text,opts){opts=opts||{};return new D2.Paragraph(Object.assign({children:[new D2.TextRun(Object.assign({text:text,font:"Arial",size:22},opts.run||{}))],alignment:opts.align||AT.JUSTIFIED,spacing:{after:opts.after||120},indent:opts.indent||{}},opts.par||{}));}
+for(var i=0;i<lines.length;i++){
+var line=lines[i].trim();
+if(!line){children.push(new D2.Paragraph({children:[new D2.TextRun("")],spacing:{after:0}}));continue;}
+if(i<3&&/^(PORTARIA|DECRETO|PROCURA|OFÍCIO)/i.test(line)){children.push(par(line,{align:AT.CENTER,run:{bold:true,size:28},after:80}));continue;}
+if(i<5&&/^DE \d/.test(line)){children.push(par(line,{align:AT.CENTER,run:{bold:true,size:24},after:160}));continue;}
+if(line.startsWith('"')&&line.endsWith('"')){ children.push(par(line,{align:AT.JUSTIFIED,run:{bold:true,italics:true,size:22},indent:{left:2880},after:200}));continue;}
+if(/^CONSIDERANDO/.test(line)){children.push(new D2.Paragraph({alignment:AT.JUSTIFIED,spacing:{after:160},indent:{firstLine:720},children:[new D2.TextRun({text:"CONSIDERANDO",bold:true,font:"Arial",size:22}),new D2.TextRun({text:line.replace("CONSIDERANDO",""),font:"Arial",size:22})]}));continue;}
+if(/^(O PREFEITO|DETERMINA:|DECRETA:)/.test(line)){children.push(par(line,{align:AT.CENTER,run:{bold:true},before:160,after:160,par:{spacing:{before:160,after:160}}}));continue;}
+if(/^(Art\.|§|CAPÍTULO)/.test(line)){children.push(par(line,{indent:{firstLine:720},after:120}));continue;}
+if(/^(I{1,3}V?|VI{0,3}|IX|X) [–-]/.test(line)){children.push(par(line,{indent:{firstLine:1440},after:120}));continue;}
+if(/^(Fabrício|Bruno|Prefeito|Procurador|- Prefeito)/.test(line)){children.push(par(line,{align:AT.CENTER,run:{bold:/^(Fabrício|Bruno)/.test(line)},after:40,par:{spacing:{before:80,after:40}}}));continue;}
+children.push(par(line,{indent:{firstLine:720},after:120}));
+}
+var doc=new D2.Document({styles:{default:{document:{run:{font:"Arial",size:22}}}},sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1440,right:1440,bottom:1440,left:1701}}},children:children}]});
+var buf=await D2.Packer.toBuffer(doc);
+var blob=new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+var url=URL.createObjectURL(blob);
+var a=document.createElement("a");
+a.href=url;
+var tipo=window._gDoc||"doc";
+a.download="PGM_"+tipo+"_Extrema.docx";
+a.click();
+URL.revokeObjectURL(url);
+ntf("Download iniciado!");
 }
 window.addEventListener("load",async function(){const sv=localStorage.getItem("_pgms");if(sv){try{S=JSON.parse(sv);if(S&&S.t==="pgm")await sA();else if(S&&S.t==="sec")sP();else throw"x"}catch(e){S=null;localStorage.removeItem("_pgms");hL();document.getElementById("ls").classList.remove("h")}}else{hL();document.getElementById("ls").classList.remove("h")}});
 </script>
