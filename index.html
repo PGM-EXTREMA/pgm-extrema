@@ -255,12 +255,131 @@ function oR(id,n,t){sM("<div class=\"md\"><div class=\"mh\"><h3>Responder #"+n+"
 async function eR(id){const r=document.getElementById("_rt").value.trim();if(!r){ntf("Digite a resposta.","#e05c5c");return}await SB.from("protocolos").update({status:"respondido",resposta:r,respondido_em:new Date().toISOString(),respondido_por:S.d&&S.d.nome}).eq("id",id);const fi=document.getElementById("_rfile");if(fi&&fi.files&&fi.files.length>0){for(const f of Array.from(fi.files)){const path="protocolos/"+id+"/resp_"+Date.now()+"_"+f.name;const{error}=await SB.storage.from("documentos").upload(path,f,{upsert:true});if(!error){const{data:pu}=SB.storage.from("documentos").getPublicUrl(path);await SB.from("anexos").insert({nome:f.name,url:pu.publicUrl,tamanho:f.size,tipo:f.type,referencia_id:id,referencia_tipo:"protocolo_resp",criado_por:S.d&&S.d.nome});}}}ntf("Resposta enviada!");cM();await rl()}
 const stD=x=>{if(x.status==="concluida")return"concluida";const r=dl(x.prazo);if(r!==null&&r<0)return"vencida";return x.status||"pendente"};
 const smD={pendente:["#c9a84c","Pendente"],andamento:["#4a90d9","Andamento"],concluida:["#4caf82","Concluida"],vencida:["#e05c5c","Vencida"]};
-function rDm(el,f){const isPGMd=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
-let lista=f==="todas"?D.d:D.d.filter(x=>stD(x)===f);
-// Apply assessor filter if set (procurador only)
-if(window._assF&&(S.d&&(S.d.role==="procurador"||S.d.role==="pgm"))){
-  lista=lista.filter(x=>x.assessor_id===window._assF);
-}const rows=lista.length===0?"<tr><td colspan=\"5\" class=\"e2\">Nenhuma demanda</td></tr>":lista.map(function(d2){const sd=stD(d2);const sm2=smD[sd];const r=dl(d2.prazo);const a=D.u.find(u=>u.id===d2.assessor_id);const pt=r!==null&&sd!=="concluida"?"<div style=\"font-size:10px;color:"+(r<0?"#e05c5c":r<=3?"#e09440":"var(--gray)")+"\">"+(r<0?Math.abs(r)+"d atras":r===0?"Hoje":r+"d")+"</div>":"";return"<tr><td><div style=\"font-weight:500\">"+(d2.titulo||"")+"</div></td><td>"+(a?a.nome:"-")+"</td><td><div style=\"font-size:11px\">"+fd(d2.prazo)+"</div>"+pt+"</td><td>"+(sm2?"<span class=\"bdg\" style=\"background:"+sm2[0]+"22;color:"+sm2[0]+"\">"+sm2[1]+"</span>":"")+"</td><td><div style=\"display:flex;gap:4px\">"+(sd!=="concluida"?"<button class=\"bsm\" style=\"background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)\" data-id=\""+d2.id+"\" onclick=\"cD(this.dataset.id)\">OK</button>":"")+""+(S.d&&S.d.role==="procurador"?"<button class=\"bsm\" style=\"background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)\" data-id=\""+d2.id+"\" onclick=\"oDf(this.dataset.id)\">Edit</button><button class=\"bsm\" style=\"background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.2)\" data-id=\""+d2.id+"\" onclick=\"xD(this.dataset.id)\">Del</button>":"")+"</div></td></tr>"}).join("");el.innerHTML="<div class=\"tb\"><div><h2>Demandas Internas</h2>"+(isPGMd?"<div style=\"display:flex;align-items:center;gap:8px;flex-wrap:wrap\">"+"<select id=\"_assFilter\" onchange=\"window._assF=this.value==='todas'?null:this.value;rDm(document.getElementById('ct'),document.querySelector('.tab.a')?document.querySelector('.tab.a').dataset.f||'todas':'todas')\" style=\"padding:6px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#f0ece3;font-size:12px;font-family:inherit\">"+"<option value=\"todas\">Todos os Assessores</option>"+D.u.filter(u=>u.role!=="procurador").map(u=>"<option value=\""+u.id+"\""+( window._assF===u.id?" selected":"")+">"+u.nome+"</option>").join("")+"</select>"+(window._assF?"<button class=\"bsm\" style=\"background:rgba(255,255,255,.06);color:var(--gray);border:1px solid rgba(255,255,255,.1)\" onclick=\"window._assF=null;rDm(document.getElementById(&quot;ct&quot;),'todas')\">x Limpar</button>":"")+"</div>":"")+"</div>"+(S.d&&S.d.role==="procurador"?"<button class=\"bn bp\" onclick=\"oDf(null)\">+ Nova</button>":"")+"</div><div class=\"pb\"><div class=\"tbb\">"+["todas","pendente","andamento","concluida","vencida"].map(s=>"<button class=\"tab"+(f===s?" a":"")+"\" data-f=\""+s+"\" onclick=\"rDm(document.getElementById(&quot;ct&quot;),this.dataset.f)\">"+(s==="todas"?"Todas":smD[s]&&smD[s][1]||s)+"</button>").join("")+"</div><div class=\"tw\"><table><thead><tr><th>Titulo</th><th>Assessor</th><th>Prazo</th><th>Status</th><th>Acoes</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>"}
+function rDm(el,f,assessorId){
+const isPGMd=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
+// For procurador: use assessor tab system
+if(isPGMd){
+  // Get selected assessor (from param or stored)
+  if(assessorId!==undefined) window._assF=assessorId;
+  const selAss=window._assF;
+  // Build assessor tabs
+  const assessores=D.u.filter(u=>u.role!=="procurador");
+  // Count pending per assessor
+  const cntByAss={};
+  D.d.forEach(d=>{
+    if(!cntByAss[d.assessor_id]) cntByAss[d.assessor_id]={total:0,pend:0};
+    cntByAss[d.assessor_id].total++;
+    if(d.status==="pendente"||d.status==="andamento") cntByAss[d.assessor_id].pend++;
+  });
+  const assTabs=assessores.map(u=>{
+    const cnt=cntByAss[u.id]||{total:0,pend:0};
+    const isActive=selAss===u.id;
+    return "<button class=\"tab"+(isActive?" a":"")+"\" style=\"display:flex;align-items:center;gap:6px\" onclick=\"window._assF='"+u.id+"';window._stF='todas';rDm(document.getElementById('ct'),'todas','"+u.id+"')\" >"+
+      u.nome+
+      (cnt.pend>0?"<span style=\"background:#e09440;color:#000;border-radius:10px;padding:0 6px;font-size:10px;font-weight:700;min-width:18px;text-align:center\">"+cnt.pend+"</span>":"")+
+    "</button>";
+  }).join("");
+  // Filter lista by selected assessor
+  const stF=window._stF||"todas";
+  let lista=selAss ? D.d.filter(x=>x.assessor_id===selAss) : D.d;
+  if(stF!=="todas") lista=lista.filter(x=>stD(x)===stF);
+  // Status sub-tabs for selected assessor
+  const stTabs=["todas","pendente","andamento","concluida","vencida"].map(s=>{
+    const lbl={todas:"Todas",pendente:"Pendente",andamento:"Andamento",concluida:"Concluida",vencida:"Vencida"}[s];
+    return "<button class=\"tab"+(stF===s?" a":"")+"\" onclick=\"window._stF='"+s+"';rDm(document.getElementById('ct'),'"+s+"',window._assF)\">"+lbl+"</button>";
+  }).join("");
+  // Cards
+  const cards=lista.length===0
+    ?"<p style=\"text-align:center;padding:60px;color:var(--gray)\">Nenhuma demanda"+(selAss?" para este assessor":"")+(stF!=="todas"?" com status '"+stF+"'":"")+".</p>"
+    :lista.map(d2=>{
+        const ass=D.u.find(u=>u.id===d2.assessor_id);
+        const anx=(D.anx||[]).filter(a=>a.referencia_id===d2.id&&a.referencia_tipo==="demanda");
+        const sd=stD(d2);
+        const[sm2]=cSD(sd);
+        const concBtn=sd!=="concluida"
+          ?""
+          :"";
+        return "<div class=\"pc\" style=\"border-left:4px solid "+(sm2?sm2[0]:"#c9a84c")+";margin-bottom:12px\">"+
+          "<div style=\"display:flex;align-items:flex-start;justify-content:space-between;gap:10px\">"+
+          "<div style=\"flex:1\">"+
+          "<div style=\"font-size:15px;font-weight:600;margin-bottom:4px\">"+d2.titulo+"</div>"+
+          (d2.obs?"<div style=\"font-size:12px;color:var(--gray);margin-bottom:6px\">"+d2.obs+"</div>":"")+
+          "<div style=\"display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--gray)\">"+
+          (d2.prazo?"<span>Prazo: "+fd(d2.prazo)+"</span>":"")+
+          "<span>Prioridade: "+( d2.prioridade||"normal")+"</span>"+
+          "</div>"+
+          (anx.length>0?"<div style=\"margin-top:8px\">"+anx.map(a=>"<a href=\""+a.url+"\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:3px;padding:2px 7px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:4px;color:#c9a84c;text-decoration:none;font-size:11px;margin-right:4px\">&#128206; "+a.nome+"</a>").join("")+"</div>":"")+
+          "</div>"+
+          "<div style=\"display:flex;flex-direction:column;align-items:flex-end;gap:6px\">"+
+          "<span class=\"bdg\" style=\"background:"+(sm2?sm2[0]:"#c9a84c")+"22;color:"+(sm2?sm2[0]:"#c9a84c")+"\">"+(sm2?sm2[1]:sd)+"</span>"+
+          "<div style=\"display:flex;gap:4px\">"+
+          "<button class=\"bsm\" onclick=\"oDf('"+d2.id+"')\" style=\"background:rgba(255,255,255,.06);color:var(--gray);border:1px solid rgba(255,255,255,.1)\">Edit</button>"+
+          "<button class=\"bsm\" style=\"background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.25)\" onclick=\"dDm('"+d2.id+"')\" >Del</button>"+
+          (sd!=="concluida"?"<button class=\"bsm\" style=\"background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)\" onclick=\"chSt('"+d2.id+"','concluida')\">OK</button>":"")+
+          "</div></div></div></div>";
+      }).join("");
+  el.innerHTML=
+    "<div class=\"tb\"><div><h2>Demandas Internas</h2></div>"+
+    "<button class=\"bn bp\" onclick=\"oDf(null)\">+ Nova</button></div>"+
+    "<div class=\"pb\">"+
+    // Assessor tabs row
+    "<div style=\"display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)\">"+
+    "<button class=\"tab"+(selAss===null||selAss===undefined?" a":"")+"\"
+      onclick=\"window._assF=null;window._stF='todas';rDm(document.getElementById('ct'),'todas',null)\">Todos</button>"+
+    assTabs+
+    "</div>"+
+    // Status sub-tabs
+    "<div class=\"tbb\" style=\"margin-bottom:16px\">"+stTabs+"</div>"+
+    "<div>"+cards+"</div></div>";
+  return;
+}
+// Non-procurador: show only own demandas with status tabs
+let lista=D.d.filter(x=>x.assessor_id===S.d.id);
+if(f&&f!=="todas") lista=lista.filter(x=>stD(x)===f);
+const stTabs2=["todas","pendente","andamento","concluida","vencida"].map(s=>{
+  const lbl={todas:"Todas",pendente:"Pendente",andamento:"Andamento",concluida:"Concluida",vencida:"Vencida"}[s];
+  return "<button class=\"tab"+((f||"todas")===s?" a":"")+"\" data-f=\""+s+"\" onclick=\"rDm(document.getElementById('ct'),'"+s+"')\" >"+lbl+"</button>";
+}).join("");
+const cards2=lista.length===0
+  ?"<p style=\"text-align:center;padding:60px;color:var(--gray)\">Nenhuma demanda atribuida a voce.</p>"
+  :lista.map(d2=>{
+      const anx=(D.anx||[]).filter(a=>a.referencia_id===d2.id&&a.referencia_tipo==="demanda");
+      const paAnx=(D.anx||[]).filter(a=>a.referencia_id===d2.id&&a.referencia_tipo==="para_assinatura");
+      const signAnx=(D.anx||[]).filter(a=>a.referencia_id===d2.id&&a.referencia_tipo==="assinado");
+      const sd=stD(d2);
+      const[sm2]=cSD(sd);
+      const concBtn=sd!=="concluida"
+        ?"<button class=\"bsm\" style=\"background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)\" data-id=\""+d2.id+"\" onclick=\"cD(this.dataset.id)\">Concluir</button>"
+        :"";
+      const anexosHtml=anx.length>0
+        ?"<div style=\"margin-top:10px\">"+anx.map(a=>"<a href=\""+a.url+"\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:4px;color:#c9a84c;text-decoration:none;font-size:11px;margin-right:4px\">&#128206; "+a.nome+"</a>").join("")+"</div>"
+        :"";
+      const paraAssHtml=paAnx.length>0
+        ?"<div style=\"margin-top:12px;padding:10px;background:rgba(224,148,64,.08);border:1px solid rgba(224,148,64,.25);border-radius:7px\"><div style=\"font-size:10px;color:#e09440;font-weight:700;margin-bottom:6px\">Aguardando Assinatura</div>"+paAnx.map(a=>"<a href=\""+a.url+"\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(224,148,64,.1);border:1px solid rgba(224,148,64,.3);border-radius:4px;color:#e09440;text-decoration:none;font-size:11px;margin-right:4px\">&#128229; "+a.nome+"</a>").join("")+"</div>"
+        :"";
+      const assinadosHtml=signAnx.length>0
+        ?"<div style=\"margin-top:10px;padding:10px;background:rgba(76,175,130,.06);border:1px solid rgba(76,175,130,.2);border-radius:7px\"><div style=\"font-size:10px;color:#4caf82;font-weight:700;margin-bottom:6px\">Documento Assinado</div>"+signAnx.map(a=>"<a href=\""+a.url+"\" target=\"_blank\" style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:rgba(76,175,130,.08);border:1px solid rgba(76,175,130,.25);border-radius:4px;color:#4caf82;text-decoration:none;font-size:11px;margin-right:4px\">&#128196; "+a.nome+"</a>").join("")+"</div>"
+        :"";
+      const btnAssHtml=sd!=="concluida"
+        ?"<div style=\"margin-top:12px\"><label style=\"font-size:10px;color:var(--gray);text-transform:uppercase;font-weight:600;margin-bottom:5px;display:block\">Enviar documento para assinatura</label><div style=\"display:flex;gap:8px;align-items:center\"><input type=\"file\" id=\"_paf_"+d2.id+"\" multiple style=\"flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px;color:#f0ece3;font-size:11px;cursor:pointer\"><button class=\"bsm\" style=\"background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3);white-space:nowrap\" data-id=\""+d2.id+"\" onclick=\"envSign(this.dataset.id)\">Enviar</button></div></div>"
+        :"";
+      const trfHtml=sd!=="concluida"
+        ?"<div style=\"margin-top:10px;padding:10px;background:rgba(255,255,255,.03);border-radius:7px;border:1px solid rgba(255,255,255,.07)\"><div style=\"font-size:10px;color:var(--gray);text-transform:uppercase;font-weight:600;margin-bottom:6px\">Transferir para outro assessor</div><div style=\"display:flex;gap:8px;align-items:center\"><select id=\"_trf_"+d2.id+"\" style=\"flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 10px;color:#f0ece3;font-size:12px;font-family:inherit\"><option value=\"\">Selecione o assessor...</option>"+D.u.filter(u=>u.role!==\"procurador\"&&u.id!==S.d.id).map(u=>"<option value=\""+u.id+"\">"+u.nome+"</option>").join("")+"</select><button class=\"bsm\" style=\"background:rgba(138,155,176,.15);color:#8a9bb0;border:1px solid rgba(138,155,176,.3);white-space:nowrap\" data-id=\""+d2.id+"\" onclick=\"trfDem(this.dataset.id)\">Transferir</button></div></div>"
+        :"";
+      return "<div class=\"pc\" style=\"border-left:4px solid "+(sm2?sm2[0]:"#c9a84c")+";margin-bottom:14px\">"+
+        "<div style=\"font-size:15px;font-weight:600;margin-bottom:4px\">"+d2.titulo+"</div>"+
+        (d2.obs?"<div style=\"font-size:12px;color:var(--gray);margin-bottom:6px\">"+d2.obs+"</div>":"")+
+        "<div style=\"display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px\">"+
+        "<span class=\"bdg\" style=\"background:"+(sm2?sm2[0]:"#c9a84c")+"22;color:"+(sm2?sm2[0]:"#c9a84c")+"\">"+(sm2?sm2[1]:sd)+"</span>"+
+        (d2.prazo?"<span style=\"font-size:11px;color:var(--gray);padding:2px 0\">Prazo: "+fd(d2.prazo)+"</span>":"")+
+        "</div>"+
+        concBtn+
+        anexosHtml+paraAssHtml+assinadosHtml+btnAssHtml+trfHtml+
+        "</div>";
+    }).join("");
+el.innerHTML="<div class=\"tb\"><div><h2>Minhas Demandas</h2></div></div>"+
+  "<div class=\"pb\"><div class=\"tbb\">"+stTabs2+"</div><div>"+cards2+"</div></div>";
+}
 function oDf(id){const d2=id?D.d.find(x=>x.id===id):{};if(!d2)return;sM("<div class=\"md\"><div class=\"mh\"><h3>"+(id?"Editar":"Nova Demanda")+"</h3><button class=\"mx\" onclick=\"cM()\">x</button></div><div class=\"mb\"><div class=\"fr\"><div class=\"fi ff\"><label>Titulo</label><input id=\"_dt\" value=\""+(d2.titulo||"")+"\"></div><div class=\"fi\"><label>Assessor</label><select id=\"_da\"><option value=\"\">-</option>"+D.u.map(u=>"<option value=\""+u.id+"\""+( d2.assessor_id===u.id?" selected":"")+">"+u.nome+"</option>").join("")+"</select></div><div class=\"fi\"><label>Prazo</label><input type=\"date\" id=\"_dp\" value=\""+(d2.prazo?d2.prazo.split("T")[0]:"")+"\"></div><div class=\"fi\"><label>Tipo</label><select id=\"_dtp\"><option value=\"\">-</option>"+["Parecer Juridico","Contrato","Licitacao","Judicial","Consultoria","Administrativo","Outro"].map(tp=>"<option"+(d2.tipo===tp?" selected":"")+">"+tp+"</option>").join("")+"</select></div><div class=\"fi\"><label>Prioridade</label><select id=\"_dpr\">"+["normal","alta","urgente"].map(p2=>"<option value=\""+p2+"\""+((d2.prioridade||"normal")===p2?" selected":"")+">"+p2+"</option>").join("")+"</select></div><div class=\"fi ff\"><label>Obs</label><textarea id=\"_do\" rows=\"3\">"+(d2.obs||"")+"</textarea></div>"+"<div class=\"fi ff\"><label>Anexos (opcional - selecione um ou mais)</label><input type=\"file\" id=\"_dfile\" multiple style=\"background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px;color:#f0ece3;font-size:12px;width:100%;cursor:pointer\"></div></div></div><div class=\"mf\"><button class=\"bn bs\" onclick=\"cM()\">Cancelar</button><button class=\"bn bp\" data-id=\""+(id||"")+"\" onclick=\"sD(this.dataset.id)\">Salvar</button></div></div>")}
 async function sD(id){const o={titulo:document.getElementById("_dt").value.trim(),assessor_id:document.getElementById("_da").value||null,prazo:document.getElementById("_dp").value||null,tipo:document.getElementById("_dtp").value||null,prioridade:document.getElementById("_dpr").value,obs:document.getElementById("_do").value||null};if(!o.titulo){ntf("Preencha o titulo.","#e05c5c");return}let demId=id;if(id){await SB.from("demandas").update(o).eq("id",id)}else{const{data:nd}=await SB.from("demandas").insert(Object.assign({},o,{status:"pendente"})).select().single();demId=nd&&nd.id}const fi=document.getElementById("_dfile");if(fi&&fi.files&&fi.files.length>0&&demId){const files=Array.from(fi.files);let ok=0;for(const f of files){const path="demandas/"+demId+"/"+Date.now()+"_"+f.name;const{error:ue}=await SB.storage.from("documentos").upload(path,f,{upsert:true});if(!ue){const{data:pu}=SB.storage.from("documentos").getPublicUrl(path);await SB.from("anexos").insert({nome:f.name,url:pu.publicUrl,tamanho:f.size,tipo:f.type,referencia_id:demId,referencia_tipo:"demanda",criado_por:S.d&&S.d.nome});ok++;}};ntf("Salvo! "+ok+" anexo(s) enviado(s).");}else{ntf("Salvo!")}cM();await rl()}
 async function cD(id){await SB.from("demandas").update({status:"concluida",concluida_em:new Date().toISOString()}).eq("id",id);ntf("Concluida!");await rl()}
