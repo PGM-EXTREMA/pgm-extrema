@@ -263,17 +263,19 @@ var curAss=window._assF||null;
 var curSt=window._stF||"todas";
 if(isPGM){
   var cnt={};
-  D.d.forEach(function(d){if(!cnt[d.assessor_id])cnt[d.assessor_id]={p:0};var s=stD(d);if(s==="pendente"||s==="andamento")cnt[d.assessor_id].p++;});
+  D.d.forEach(function(d){
+    if(!cnt[d.assessor_id]) cnt[d.assessor_id]={p:0};
+    var s=stD(d);
+    if(s==="pendente"||s==="andamento") cnt[d.assessor_id].p++;
+  });
   var asses=D.u.filter(function(u){return u.role!=="procurador";});
-  var allTab=["<button class=\"tab"+(curAss===null?" a":"")+"\">",
-    "<span onclick=\"window._assF=null;window._stF=&quot;todas&quot;;rDm(document.getElementById(&quot;ct&quot;),&quot;todas&quot;,null)\">Todos</span>",
-  "</button>"].join("");
-  allTab='<button class="tab'+(curAss===null?' a':'');' onclick="window._assF=null;window._stF=null;rDm(document.getElementById(\'ct\'),\'todas\',null)">Todos</button>';
+  var allActive=curAss===null;
+  var allTab='<button class="tab'+(allActive?' a':'')+'" onclick="window._assF=null;window._stF=null;rDm(document.getElementById(\'ct\'),null,null)">Todos</button>';
   var assTabs=asses.map(function(u){
     var c=cnt[u.id]||{p:0};
     var badge=c.p>0?'<span style="background:#e09440;color:#000;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:4px">'+c.p+"</span>":"";
-    var isAct=curAss===u.id;
-    return '<button class="tab'+(isAct?' a':'')+'" data-aid="'+u.id+'" onclick="window._assF=this.dataset.aid;window._stF=null;rDm(document.getElementById(\'ct\'),\'todas\',this.dataset.aid)">'+u.nome+badge+"</button>";
+    var act=curAss===u.id;
+    return '<button class="tab'+(act?' a':'')+'" data-aid="'+u.id+'" onclick="window._assF=this.dataset.aid;window._stF=null;rDm(document.getElementById(\'ct\'),null,this.dataset.aid)">'+u.nome+badge+"</button>";
   }).join("");
   var lista=curAss?D.d.filter(function(d){return d.assessor_id===curAss;}):D.d;
   if(curSt&&curSt!=="todas") lista=lista.filter(function(d){return stD(d)===curSt;});
@@ -287,15 +289,19 @@ if(isPGM){
     :lista.map(function(d2){
       var ass=D.u.find(function(u){return u.id===d2.assessor_id;});
       var anx=(D.anx||[]).filter(function(a){return a.referencia_id===d2.id&&a.referencia_tipo==="demanda";});
-      var sd=stD(d2);var sm2=cSD(sd);var cor=sm2&&sm2[0]?sm2[0]:"#c9a84c";var lbl=sm2&&sm2[1]?sm2[1]:sd;
-      var anxH=anx.length>0?'<div style="margin-top:8px">'+anx.map(function(a){return'<a href="'+a.url+'" target="_blank" style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:4px;color:#c9a84c;text-decoration:none;font-size:11px;margin-right:4px">&#128206; '+a.nome+"</a>";}).join("")+"</div>":"";
+      var sd=stD(d2);var sm2=smD[sd]||["#c9a84c","Pendente"];
+      var cor=sm2[0];var lbl=sm2[1];
+      var anxH=anx.length>0?'<div style="margin-top:8px">'+anx.map(function(a){
+        return '<a href="'+a.url+'" target="_blank" style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:4px;color:#c9a84c;text-decoration:none;font-size:11px;margin-right:4px">&#128206; '+a.nome+"</a>";
+      }).join("")+"</div>":"";
       return '<div class="pc" style="border-left:4px solid '+cor+';margin-bottom:12px">'+
         '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'+
-        '<div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:4px">'+d2.titulo+"</div>"+
+        '<div style="flex:1">'+
+        '<div style="font-size:15px;font-weight:600;margin-bottom:4px">'+d2.titulo+"</div>"+
         (d2.obs?'<div style="font-size:12px;color:var(--gray);margin-bottom:6px">'+d2.obs+"</div>":"")+
         '<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--gray)">'+
-        (ass?"Assessor: "+ass.nome+" &nbsp;":"")+
-        (d2.prazo?"Prazo: "+fd(d2.prazo):"")+"</div>"+anxH+"</div>"+
+        (ass?"Assessor: "+ass.nome+" &nbsp;":"")+(d2.prazo?"Prazo: "+fd(d2.prazo):"")+
+        "</div>"+anxH+"</div>"+
         '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">'+
         '<span class="bdg" style="background:'+cor+'22;color:'+cor+'">'+lbl+"</span>"+
         '<div style="display:flex;gap:4px">'+
@@ -305,12 +311,10 @@ if(isPGM){
         "</div></div></div></div>";
     }).join("");
   el.innerHTML=
-    '<div class="tb"><div><h2>Demandas Internas</h2></div>'+
-    '<button class="bn bp" onclick="oDf(null)">+ Nova</button></div>'+
+    '<div class="tb"><div><h2>Demandas Internas</h2></div><button class="bn bp" onclick="oDf(null)">+ Nova</button></div>'+
     '<div class="pb">'+
     '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)">'+
-    allTab+assTabs+
-    "</div>"+
+    allTab+assTabs+"</div>"+
     '<div class="tbb" style="margin-bottom:16px">'+stTabs+"</div>"+
     "<div>"+cards+"</div></div>";
   return;
@@ -320,20 +324,22 @@ var lista2=D.d.filter(function(d){return d.assessor_id===S.d.id;});
 if(curSt2!=="todas") lista2=lista2.filter(function(d){return stD(d)===curSt2;});
 var stOpts2=["todas","pendente","andamento","concluida","vencida"];
 var stLbls2={todas:"Todas",pendente:"Pendente",andamento:"Andamento",concluida:"Concluida",vencida:"Vencida"};
-var stTabs2=stOpts2.map(function(s){return '<button class="tab'+(curSt2===s?' a':'')+'" data-f="'+s+'" onclick="window._stF=this.dataset.f;rDm(document.getElementById(\'ct\'),this.dataset.f)">'+stLbls2[s]+"</button>";}).join("");
+var stTabs2=stOpts2.map(function(s){
+  return '<button class="tab'+(curSt2===s?' a':'')+'" data-f="'+s+'" onclick="window._stF=this.dataset.f;rDm(document.getElementById(\'ct\'),this.dataset.f)">'+stLbls2[s]+"</button>";
+}).join("");
 var cards2=lista2.length===0
   ?'<p style="text-align:center;padding:60px;color:var(--gray)">Nenhuma demanda atribuida a voce.</p>'
   :lista2.map(function(d2){
     var anx=(D.anx||[]).filter(function(a){return a.referencia_id===d2.id&&a.referencia_tipo==="demanda";});
     var paAnx=(D.anx||[]).filter(function(a){return a.referencia_id===d2.id&&a.referencia_tipo==="para_assinatura";});
     var signAnx=(D.anx||[]).filter(function(a){return a.referencia_id===d2.id&&a.referencia_tipo==="assinado";});
-    var sd=stD(d2);var sm2=cSD(sd);var cor=sm2&&sm2[0]?sm2[0]:"#c9a84c";var lbl=sm2&&sm2[1]?sm2[1]:sd;
-    var concBtn=sd!=="concluida"?'<button class="bsm" style="background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)" data-id="'+d2.id+'" onclick="cD(this.dataset.id)">Concluir</button>':"";
+    var sd=stD(d2);var sm2=smD[sd]||["#c9a84c","Pendente"];var cor=sm2[0];var lbl=sm2[1];
+    var concBtn=sd!=="concluida"?'<button class="bsm" style="background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)" data-id="'+d2.id+'" onclick="cD(this.dataset.id)">Concluir</button>':""
     var anxH=anx.length>0?'<div style="margin-top:10px">'+anx.map(function(a){return'<a href="'+a.url+'" target="_blank" style="display:inline-flex;padding:3px 8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);border-radius:4px;color:#c9a84c;text-decoration:none;font-size:11px;margin-right:4px">&#128206; '+a.nome+"</a>";}).join("")+"</div>":"";
     var paH=paAnx.length>0?'<div style="margin-top:12px;padding:10px;background:rgba(224,148,64,.08);border:1px solid rgba(224,148,64,.25);border-radius:7px"><div style="font-size:10px;color:#e09440;font-weight:700;margin-bottom:6px">Aguardando Assinatura</div>'+paAnx.map(function(a){return'<a href="'+a.url+'" target="_blank" style="display:inline-flex;padding:3px 8px;background:rgba(224,148,64,.1);border:1px solid rgba(224,148,64,.3);border-radius:4px;color:#e09440;text-decoration:none;font-size:11px;margin-right:4px">&#128229; '+a.nome+"</a>";}).join("")+"</div>":"";
     var signH=signAnx.length>0?'<div style="margin-top:10px;padding:10px;background:rgba(76,175,130,.06);border:1px solid rgba(76,175,130,.2);border-radius:7px"><div style="font-size:10px;color:#4caf82;font-weight:700;margin-bottom:6px">Documento Assinado</div>'+signAnx.map(function(a){return'<a href="'+a.url+'" target="_blank" style="display:inline-flex;padding:3px 8px;background:rgba(76,175,130,.08);border:1px solid rgba(76,175,130,.25);border-radius:4px;color:#4caf82;text-decoration:none;font-size:11px;margin-right:4px">&#128196; '+a.nome+"</a>";}).join("")+"</div>":"";
-    var btnA=sd!=="concluida"?'<div style="margin-top:12px"><label style="font-size:10px;color:var(--gray);font-weight:600;margin-bottom:5px;display:block">Enviar para assinatura</label><div style="display:flex;gap:8px"><input type="file" id="_paf_'+d2.id+'" multiple style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px;color:#f0ece3;font-size:11px;cursor:pointer"><button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" data-id="'+d2.id+'" onclick="envSign(this.dataset.id)">Enviar</button></div></div>':"";
-    var trfH=sd!=="concluida"?'<div style="margin-top:10px;padding:10px;background:rgba(255,255,255,.03);border-radius:7px;border:1px solid rgba(255,255,255,.07)"><div style="font-size:10px;color:var(--gray);font-weight:600;margin-bottom:6px">Transferir para outro assessor</div><div style="display:flex;gap:8px"><select id="_trf_'+d2.id+'" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 10px;color:#f0ece3;font-size:12px;font-family:inherit"><option value="">Selecione...</option>'+D.u.filter(function(u){return u.role!=="procurador"&&u.id!==S.d.id;}).map(function(u){return'<option value="'+u.id+'">'+u.nome+"</option>";}).join("")+'</select><button class="bsm" style="background:rgba(138,155,176,.15);color:#8a9bb0;border:1px solid rgba(138,155,176,.3)" data-id="'+d2.id+'" onclick="trfDem(this.dataset.id)">Transferir</button></div></div>':"";
+    var btnA=sd!=="concluida"?'<div style="margin-top:12px"><label style="font-size:10px;color:var(--gray);font-weight:600;margin-bottom:5px;display:block">Enviar para assinatura</label><div style="display:flex;gap:8px"><input type="file" id="_paf_'+d2.id+'" multiple style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px;color:#f0ece3;font-size:11px;cursor:pointer"><button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" data-id="'+d2.id+'" onclick="envSign(this.dataset.id)">Enviar</button></div></div>':""
+    var trfH=sd!=="concluida"?'<div style="margin-top:10px;padding:10px;background:rgba(255,255,255,.03);border-radius:7px;border:1px solid rgba(255,255,255,.07)"><div style="font-size:10px;color:var(--gray);font-weight:600;margin-bottom:6px">Transferir para outro assessor</div><div style="display:flex;gap:8px"><select id="_trf_'+d2.id+'" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 10px;color:#f0ece3;font-size:12px;font-family:inherit"><option value="">Selecione...</option>'+D.u.filter(function(u){return u.role!=="procurador"&&u.id!==S.d.id;}).map(function(u){return'<option value="'+u.id+'">'+u.nome+"</option>";}).join("")+'</select><button class="bsm" style="background:rgba(138,155,176,.15);color:#8a9bb0;border:1px solid rgba(138,155,176,.3)" data-id="'+d2.id+'" onclick="trfDem(this.dataset.id)">Transferir</button></div></div>':""
     return '<div class="pc" style="border-left:4px solid '+cor+';margin-bottom:14px">'+
       '<div style="font-size:15px;font-weight:600;margin-bottom:4px">'+d2.titulo+"</div>"+
       (d2.obs?'<div style="font-size:12px;color:var(--gray);margin-bottom:6px">'+d2.obs+"</div>":"")+
