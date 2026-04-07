@@ -624,9 +624,9 @@ gSelectDoc("nomeacao");
 if(typeof docx==="undefined"){
 var s=document.createElement("script");
 s.src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js";
-s.onload=initGerador;
+s.onload=function(){setTimeout(initGerador,80);};
 document.head.appendChild(s);
-}else{initGerador();}
+}else{setTimeout(initGerador,80);}
 }
 function buildGeradorHTML(){
 return '<div style="display:grid;grid-template-columns:240px 1fr;gap:0;min-height:600px">'+
