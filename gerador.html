@@ -88,7 +88,7 @@ var ROMS=['I','II','III','IV','V','VI','VII','VIII','IX','X'];
 function ntf(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 function today(){return new Date().toISOString().split('T')[0];}
-function datePT(iso){if(!iso)return'';var p=iso.split('-');var m=['','janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];return parseInt(p[2])+' de '+m[parseInt(p[1])]+' de '+p[0];}
+function datePT(iso){if(!iso)return'';var p=iso.split('-');var m=['','janeiro','fevereiro','mar\u00e7o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];return parseInt(p[2])+' de '+m[parseInt(p[1])]+' de '+p[0];}
 
 // Create input field helper
 function mkFld(lbl, type, id, cls, placeholder, val){
@@ -140,9 +140,9 @@ function mkSelectFld(lbl, cls, options){
 // Build forms
 function buildNom(){
   var f=document.createDocumentFragment();
-  f.appendChild(mkRow([mkFld('Número da Portaria','number','_fn','','317'),mkFld('Data','date','_fd','','',today())]));
-  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','','Dispõe sobre a nomeação de servidores para cargos de provimento em comissão no âmbito da Administração Pública Municipal.')],true));
-  var ta=document.createElement('textarea');ta.id='_fc';ta.className='inp';ta.rows=3;ta.placeholder='Ex: a Comunicação Interna nº 28/2026, oriunda da Secretaria de Meio Ambiente...';
+  f.appendChild(mkRow([mkFld('N\u00famero da Portaria','number','_fn','','317'),mkFld('Data','date','_fd','','',today())]));
+  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','','Disp\u00f5e sobre a nomea\u00e7\u00e3o de servidores para cargos de provimento em comiss\u00e3o no \u00e2mbito da Administra\u00e7\u00e3o P\u00fablica Municipal.')],true));
+  var ta=document.createElement('textarea');ta.id='_fc';ta.className='inp';ta.rows=3;ta.placeholder='Ex: a Comunica\u00e7\u00e3o Interna n\u00ba 28/2026, oriunda da Secretaria de Meio Ambiente...';
   var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Considerandos (um por linha)';tf.appendChild(tl);tf.appendChild(ta);
   var tr=document.createElement('div');tr.className='g1';tr.appendChild(tf);f.appendChild(tr);
   var sh=document.createElement('div');
@@ -156,9 +156,9 @@ function buildNom(){
 
 function buildExo(){
   var f=document.createDocumentFragment();
-  f.appendChild(mkRow([mkFld('Número da Portaria','number','_fn','','319'),mkFld('Data','date','_fd','','',today())]));
-  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','','Dispõe sobre a exoneração de servidores no âmbito da Administração Pública Municipal, e dá outras providências.')],true));
-  var ta=document.createElement('textarea');ta.id='_fc';ta.className='inp';ta.rows=3;ta.placeholder='Ex: os Ofícios nº 142/2026 e 143/2026...';
+  f.appendChild(mkRow([mkFld('N\u00famero da Portaria','number','_fn','','319'),mkFld('Data','date','_fd','','',today())]));
+  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','','Disp\u00f5e sobre a exonera\u00e7\u00e3o de servidores no \u00e2mbito da Administra\u00e7\u00e3o P\u00fablica Municipal, e d\u00e1 outras provid\u00eancias.')],true));
+  var ta=document.createElement('textarea');ta.id='_fc';ta.className='inp';ta.rows=3;ta.placeholder='Ex: os Of\u00edcios n\u00ba 142/2026 e 143/2026...';
   var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Considerandos (um por linha)';tf.appendChild(tl);tf.appendChild(ta);
   var tr=document.createElement('div');tr.className='g1';tr.appendChild(tf);f.appendChild(tr);
   var sh=document.createElement('div');
@@ -172,11 +172,11 @@ function buildExo(){
 
 function buildPAE(){
   var f=document.createDocumentFragment();
-  f.appendChild(mkRow([mkFld('Número da Portaria','number','_fn','','318'),mkFld('Data','date','_fd','','',today())]));
-  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','','Determina a instauração de Processo Administrativo Especial para apuração de fatos e responsabilidades, e dá outras providências.')],true));
-  f.appendChild(mkRow([mkFld('Nº Boletim de Ocorrência','text','_fbo','','Ex: 2026-013584712-001'),mkFld('Secretaria Envolvida','text','_fsec','','Ex: Secretaria Municipal de Obras')]));
+  f.appendChild(mkRow([mkFld('N\u00famero da Portaria','number','_fn','','318'),mkFld('Data','date','_fd','','',today())]));
+  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','','Determina a instaura\u00e7\u00e3o de Processo Administrativo Especial para apura\u00e7\u00e3o de fatos e responsabilidades, e d\u00e1 outras provid\u00eancias.')],true));
+  f.appendChild(mkRow([mkFld('N\u00ba Boletim de Ocorr\u00eancia','text','_fbo','','Ex: 2026-013584712-001'),mkFld('Secretaria Envolvida','text','_fsec','','Ex: Secretaria Municipal de Obras')]));
   var ta=document.createElement('textarea');ta.id='_ffato';ta.className='inp';ta.rows=4;ta.placeholder='Descreva o fato, o local e o dano causado...';
-  var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Descrição do Fato (Art. 1º)';tf.appendChild(tl);tf.appendChild(ta);
+  var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Descri\u00e7\u00e3o do Fato (Art. 1\u00ba)';tf.appendChild(tl);tf.appendChild(ta);
   var tr=document.createElement('div');tr.className='g1';tr.appendChild(tf);f.appendChild(tr);
   var ta2=document.createElement('textarea');ta2.id='_fc';ta2.className='inp';ta2.rows=3;
   var tf2=document.createElement('div');tf2.className='fl g1';var tl2=document.createElement('label');tl2.textContent='Considerandos Adicionais';tf2.appendChild(tl2);tf2.appendChild(ta2);
@@ -186,15 +186,15 @@ function buildPAE(){
 
 function buildDec(){
   var f=document.createDocumentFragment();
-  f.appendChild(mkRow([mkFld('Número do Decreto','text','_fn','','Ex: 5.104'),mkFld('Data','date','_fd','','',today())]));
-  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','Ex: "Institui a Política Municipal de X..."')],true));
-  var ta=document.createElement('textarea');ta.id='_fc';ta.className='inp';ta.rows=4;ta.placeholder='Ex: o ofício nº 199/2026, proveniente da Secretaria Municipal de Educação;
-o disposto na Lei nº 9.394/1996...';
+  f.appendChild(mkRow([mkFld('N\u00famero do Decreto','text','_fn','','Ex: 5.104'),mkFld('Data','date','_fd','','',today())]));
+  f.appendChild(mkRow([mkFld('Ementa','text','_fe','','Ex: "Institui a Pol\u00edtica Municipal de X..."')],true));
+  var ta=document.createElement('textarea');ta.id='_fc';ta.className='inp';ta.rows=4;ta.placeholder='Ex: o of\u00edcio n\u00ba 199/2026, proveniente da Secretaria Municipal de Educa\u00e7\u00e3o;
+o disposto na Lei n\u00ba 9.394/1996...';
   var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Considerandos (um por linha)';tf.appendChild(tl);tf.appendChild(ta);
   var tr=document.createElement('div');tr.className='g1';tr.appendChild(tf);f.appendChild(tr);
-  var ta2=document.createElement('textarea');ta2.id='_farts';ta2.className='inp';ta2.rows=6;ta2.placeholder='Art. 1º – ...
-Art. 2º – ...
-Art. 3º – Este Decreto entra em vigor na data de sua publicação.';
+  var ta2=document.createElement('textarea');ta2.id='_farts';ta2.className='inp';ta2.rows=6;ta2.placeholder='Art. 1\u00ba \u2013 ...
+Art. 2\u00ba \u2013 ...
+Art. 3\u00ba \u2013 Este Decreto entra em vigor na data de sua publica\u00e7\u00e3o.';
   var tf2=document.createElement('div');tf2.className='fl g1';var tl2=document.createElement('label');tl2.textContent='Artigos do Decreto';tf2.appendChild(tl2);tf2.appendChild(ta2);
   var tr2=document.createElement('div');tr2.className='g1';tr2.appendChild(tf2);f.appendChild(tr2);
   return f;
@@ -202,33 +202,33 @@ Art. 3º – Este Decreto entra em vigor na data de sua publicação.';
 
 function buildPro(){
   var f=document.createDocumentFragment();
-  f.appendChild(mkRow([mkFld('Data','date','_fd','','',today()),mkFld('Número do Processo','text','_fproc','','Ex: 5005562-17.2025.8.13.0251')]));
-  f.appendChild(mkRow([mkFld('Vara / Juízo','text','_fvara','','Ex: 2ª VARA CÍVEL, CRIMINAL E DA INFÂNCIA E DA JUVENTUDE DA COMARCA DE EXTREMA/MG')],true));
-  f.appendChild(mkRow([mkFld('Parte Contrária','text','_fparte','','Ex: COMPANHIA DE SANEAMENTO DE MINAS GERAIS – COPASA MG')],true));
+  f.appendChild(mkRow([mkFld('Data','date','_fd','','',today()),mkFld('N\u00famero do Processo','text','_fproc','','Ex: 5005562-17.2025.8.13.0251')]));
+  f.appendChild(mkRow([mkFld('Vara / Ju\u00edzo','text','_fvara','','Ex: 2\u00aa VARA C\u00cdVEL, CRIMINAL E DA INF\u00c2NCIA E DA JUVENTUDE DA COMARCA DE EXTREMA/MG')],true));
+  f.appendChild(mkRow([mkFld('Parte Contr\u00e1ria','text','_fparte','','Ex: COMPANHIA DE SANEAMENTO DE MINAS GERAIS \u2013 COPASA MG')],true));
   var ta=document.createElement('textarea');ta.id='_fadvs';ta.className='inp';ta.rows=5;
-  ta.value='Bruno Bertolotti, Procurador Geral do Município, OAB/MG 206.199
+  ta.value='Bruno Bertolotti, Procurador Geral do Munic\u00edpio, OAB/MG 206.199
 Natanael Jairo Cazzo, OAB/MG 140.842
 Lucas Mendes Clemonte, OAB/MG 186.907
-Felipe José Faria do Nascimento, OAB/MG 221.039
+Felipe Jos\u00e9 Faria do Nascimento, OAB/MG 221.039
 Mayara Cardoso de Oliveira, OAB/MG 231.355';
-  var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Advogados Constituídos (um por linha)';tf.appendChild(tl);tf.appendChild(ta);
+  var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Advogados Constitu\u00eddos (um por linha)';tf.appendChild(tl);tf.appendChild(ta);
   var tr=document.createElement('div');tr.className='g1';tr.appendChild(tf);f.appendChild(tr);
   return f;
 }
 
 function buildOfi(){
   var f=document.createDocumentFragment();
-  f.appendChild(mkRow([mkFld('Número do Ofício','text','_fn','','Ex: 138/2026'),mkFld('Data','date','_fd','','',today())]));
-  f.appendChild(mkRow([mkFld('Destinatário','text','_fdest','','Ex: Ilmo. Sr. Secretário Municipal de Educação')],true));
-  f.appendChild(mkRow([mkFld('Assunto','text','_fassunto','','Ex: Solicitação de informações sobre...')],true));
-  var ta=document.createElement('textarea');ta.id='_fcorpo';ta.className='inp';ta.rows=8;ta.placeholder='Texto do ofício...';
-  var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Corpo do Ofício';tf.appendChild(tl);tf.appendChild(ta);
+  f.appendChild(mkRow([mkFld('N\u00famero do Of\u00edcio','text','_fn','','Ex: 138/2026'),mkFld('Data','date','_fd','','',today())]));
+  f.appendChild(mkRow([mkFld('Destinat\u00e1rio','text','_fdest','','Ex: Ilmo. Sr. Secret\u00e1rio Municipal de Educa\u00e7\u00e3o')],true));
+  f.appendChild(mkRow([mkFld('Assunto','text','_fassunto','','Ex: Solicita\u00e7\u00e3o de informa\u00e7\u00f5es sobre...')],true));
+  var ta=document.createElement('textarea');ta.id='_fcorpo';ta.className='inp';ta.rows=8;ta.placeholder='Texto do of\u00edcio...';
+  var tf=document.createElement('div');tf.className='fl g1';var tl=document.createElement('label');tl.textContent='Corpo do Of\u00edcio';tf.appendChild(tl);tf.appendChild(ta);
   var tr=document.createElement('div');tr.className='g1';tr.appendChild(tf);f.appendChild(tr);
   return f;
 }
 
 var BUILDERS={nom:buildNom,exo:buildExo,pae:buildPAE,dec:buildDec,pro:buildPro,ofi:buildOfi};
-var TITLES={nom:'Portaria de Nomeação',exo:'Portaria de Exoneração',pae:'Portaria de PAE',dec:'Decreto',pro:'Procuração Ad Judicia',ofi:'Ofício'};
+var TITLES={nom:'Portaria de Nomea\u00e7\u00e3o',exo:'Portaria de Exonera\u00e7\u00e3o',pae:'Portaria de PAE',dec:'Decreto',pro:'Procura\u00e7\u00e3o Ad Judicia',ofi:'Of\u00edcio'};
 
 function sel(t){
   curDoc=t; prevText=''; aiText=''; srvN=0;
@@ -250,26 +250,26 @@ function addSrv(){
   var n=srvN;
   var idx=ROMS[c.children.length]||'?';
   var d=document.createElement('div');d.className='srv';d.id='s'+n;
-  var hdr=document.createElement('div');hdr.className='srv-t';hdr.textContent=idx+' – Servidor';d.appendChild(hdr);
-  var rm=document.createElement('button');rm.className='srv-rm';rm.textContent='✕';
+  var hdr=document.createElement('div');hdr.className='srv-t';hdr.textContent=idx+' \u2013 Servidor';d.appendChild(hdr);
+  var rm=document.createElement('button');rm.className='srv-rm';rm.textContent='\u2715';
   rm.onclick=function(){document.getElementById('s'+n).remove();};
   d.appendChild(rm);
   if(curDoc==='nom'){
-    d.appendChild(mkRow([mkFld('Nome Completo (em maiúsculas)','text','','sN','Ex: DANIELA MORAIS BARROS')],true));
-    d.appendChild(mkRow([mkFld('CPF (mascarado)','text','','sC','Ex: ***.356.94*-**'),mkFld('Função / Cargo','text','','sF','Ex: Chefe de Divisão')]));
+    d.appendChild(mkRow([mkFld('Nome Completo (em mai\u00fasculas)','text','','sN','Ex: DANIELA MORAIS BARROS')],true));
+    d.appendChild(mkRow([mkFld('CPF (mascarado)','text','','sC','Ex: ***.356.94*-**'),mkFld('Fun\u00e7\u00e3o / Cargo','text','','sF','Ex: Chefe de Divis\u00e3o')]));
     d.appendChild(mkRow([mkFld('Secretaria','text','','sS','Ex: Secretaria Municipal de Meio Ambiente')],true));
     d.appendChild(mkRow([mkFld('Data de Efeito','date','','sE','')]));
   }else{
-    d.appendChild(mkRow([mkFld('Nome Completo (em maiúsculas)','text','','sN','Ex: ANDRE APARECIDO BORGES')],true));
+    d.appendChild(mkRow([mkFld('Nome Completo (em mai\u00fasculas)','text','','sN','Ex: ANDRE APARECIDO BORGES')],true));
     var tipoFld=document.createElement('div');tipoFld.className='fl';
     var tipoLbl=document.createElement('label');tipoLbl.textContent='Tipo';tipoFld.appendChild(tipoLbl);
-    tipoFld.appendChild(mkSelect('sT',[{v:'cargo efetivo',l:'Cargo Efetivo'},{v:'cargo em comissão',l:'Cargo em Comissão'},{v:'função de confiança',l:'Função de Confiança'}]));
+    tipoFld.appendChild(mkSelect('sT',[{v:'cargo efetivo',l:'Cargo Efetivo'},{v:'cargo em comiss\u00e3o',l:'Cargo em Comiss\u00e3o'},{v:'fun\u00e7\u00e3o de confian\u00e7a',l:'Fun\u00e7\u00e3o de Confian\u00e7a'}]));
     var pedFld=document.createElement('div');pedFld.className='fl';
     var pedLbl=document.createElement('label');pedLbl.textContent='A pedido?';pedFld.appendChild(pedLbl);
-    pedFld.appendChild(mkSelect('sP',[{v:'sim',l:'Sim'},{v:'nao',l:'Não'}]));
+    pedFld.appendChild(mkSelect('sP',[{v:'sim',l:'Sim'},{v:'nao',l:'N\u00e3o'}]));
     var r1=document.createElement('div');r1.className='g2';r1.appendChild(tipoFld);r1.appendChild(pedFld);d.appendChild(r1);
-    d.appendChild(mkRow([mkFld('Cargo / Função','text','','sF','Ex: Agente da Dengue'),mkFld('Data de Efeito','date','','sE','')]));
-    d.appendChild(mkRow([mkFld('Secretaria','text','','sS','Ex: Secretaria Municipal de Saúde')],true));
+    d.appendChild(mkRow([mkFld('Cargo / Fun\u00e7\u00e3o','text','','sF','Ex: Agente da Dengue'),mkFld('Data de Efeito','date','','sE','')]));
+    d.appendChild(mkRow([mkFld('Secretaria','text','','sS','Ex: Secretaria Municipal de Sa\u00fade')],true));
   }
   c.appendChild(d);
 }
@@ -280,13 +280,13 @@ function buildText(){
   var conds=co?co.split('
 ').filter(function(l){return l.trim();}).map(function(l){return 'CONSIDERANDO '+l.trim();}).join('
 
-'):'CONSIDERANDO a solicitação formulada pela Administração Municipal;';
+'):'CONSIDERANDO a solicita\u00e7\u00e3o formulada pela Administra\u00e7\u00e3o Municipal;';
   var pref='
 
-O PREFEITO DO MUNICÍPIO DE EXTREMA, Senhor Fabrício Sanchez Bergamin, no uso de suas atribuições legais,';
+O PREFEITO DO MUNIC\u00cdPIO DE EXTREMA, Senhor Fabr\u00edcio Sanchez Bergamin, no uso de suas atribui\u00e7\u00f5es legais,';
   var ass='
 
-Fabrício Sanchez Bergamin
+Fabr\u00edcio Sanchez Bergamin
 - Prefeito Municipal -';
   if(t==='nom'){
     var rows=Array.from(document.querySelectorAll('#srvs .srv')).map(function(r,i){
@@ -295,11 +295,11 @@ Fabrício Sanchez Bergamin
       var fn=r.querySelector('.sF').value.trim();
       var sec=r.querySelector('.sS').value.trim();
       var ef=r.querySelector('.sE').value?datePT(r.querySelector('.sE').value):'';
-      return ROMS[i]+' – '+nm+', inscrit'+(nm.slice(-1)==='A'?'a':'o')+' no CPF nº '+cpf+', para exercer a função de '+fn+', vinculado à '+sec+', com efeitos a partir de '+ef+';';
+      return ROMS[i]+' \u2013 '+nm+', inscrit'+(nm.slice(-1)==='A'?'a':'o')+' no CPF n\u00ba '+cpf+', para exercer a fun\u00e7\u00e3o de '+fn+', vinculado \u00e0 '+sec+', com efeitos a partir de '+ef+';';
     }).join('
 
 ');
-    return 'PORTARIA Nº. '+num+'
+    return 'PORTARIA N\u00ba. '+num+'
 DE '+dt.toUpperCase()+'.
 
 "'+em+'"
@@ -308,11 +308,11 @@ DE '+dt.toUpperCase()+'.
 
 DETERMINA:
 
-Art. 1º – Ficam nomeados para os cargos em comissão os seguintes servidores:
+Art. 1\u00ba \u2013 Ficam nomeados para os cargos em comiss\u00e3o os seguintes servidores:
 
 '+rows+'
 
-Art. 2º – Esta Portaria entra em vigor na data de sua publicação, produzindo efeitos nas datas específicas indicadas em cada dispositivo, ficando revogadas as disposições em contrário.'+ass;
+Art. 2\u00ba \u2013 Esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o, produzindo efeitos nas datas espec\u00edficas indicadas em cada dispositivo, ficando revogadas as disposi\u00e7\u00f5es em contr\u00e1rio.'+ass;
   }
   if(t==='exo'){
     var rows2=Array.from(document.querySelectorAll('#srvs .srv')).map(function(r,i){
@@ -321,11 +321,11 @@ Art. 2º – Esta Portaria entra em vigor na data de sua publicação, produzind
       var sec=r.querySelector('.sS').value.trim();
       var ped=r.querySelector('.sP');var pedStr=ped&&ped.value==='sim'?', a pedido,':'';
       var ef=r.querySelector('.sE').value?datePT(r.querySelector('.sE').value):'';
-      return ROMS[i]+' – '+nm+pedStr+', do cargo de '+fn+', lotado na '+sec+', com efeitos a partir de '+ef+';';
+      return ROMS[i]+' \u2013 '+nm+pedStr+', do cargo de '+fn+', lotado na '+sec+', com efeitos a partir de '+ef+';';
     }).join('
 
 ');
-    return 'PORTARIA Nº. '+num+'
+    return 'PORTARIA N\u00ba. '+num+'
 DE '+dt.toUpperCase()+'.
 
 "'+em+'"
@@ -334,49 +334,49 @@ DE '+dt.toUpperCase()+'.
 
 DETERMINA:
 
-Art. 1º – Ficam exonerados os seguintes servidores:
+Art. 1\u00ba \u2013 Ficam exonerados os seguintes servidores:
 
 '+rows2+'
 
-Art. 2º – Esta Portaria entra em vigor na data de sua publicação, produzindo efeitos nas datas especificadas em cada dispositivo, revogadas as disposições em contrário.'+ass;
+Art. 2\u00ba \u2013 Esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o, produzindo efeitos nas datas especificadas em cada dispositivo, revogadas as disposi\u00e7\u00f5es em contr\u00e1rio.'+ass;
   }
   if(t==='pae'){
     var bo=gv('_fbo'),sec=gv('_fsec'),fato=gv('_ffato');
     var boLine=bo?'
 
-CONSIDERANDO o Boletim de Ocorrência nº '+bo+';':'';
+CONSIDERANDO o Boletim de Ocorr\u00eancia n\u00ba '+bo+';':'';
     var extra=co?'
 
 '+conds:'';
-    return 'PORTARIA Nº. '+num+'
+    return 'PORTARIA N\u00ba. '+num+'
 DE '+dt.toUpperCase()+'.
 
 "'+em+'"
 
-CONSIDERANDO o relato circunstanciado da ocorrência envolvendo servidor municipal, lotado na '+sec+';'+boLine+'
+CONSIDERANDO o relato circunstanciado da ocorr\u00eancia envolvendo servidor municipal, lotado na '+sec+';'+boLine+'
 
-CONSIDERANDO que os fatos demandam apuração quanto às circunstâncias e à eventual responsabilidade dos envolvidos;
+CONSIDERANDO que os fatos demandam apura\u00e7\u00e3o quanto \u00e0s circunst\u00e2ncias e \u00e0 eventual responsabilidade dos envolvidos;
 
-CONSIDERANDO a necessidade de assegurar o devido processo legal, a ampla defesa e o contraditório, em estrita observância aos princípios constitucionais que regem a Administração Pública;'+extra+pref+'
+CONSIDERANDO a necessidade de assegurar o devido processo legal, a ampla defesa e o contradit\u00f3rio, em estrita observ\u00e2ncia aos princ\u00edpios constitucionais que regem a Administra\u00e7\u00e3o P\u00fablica;'+extra+pref+'
 
 DETERMINA:
 
-Art. 1º – Fica instaurado Processo Administrativo Especial – PAE, com a finalidade de apurar os fatos, as circunstâncias e as eventuais responsabilidades administrativas decorrentes de '+fato+'
+Art. 1\u00ba \u2013 Fica instaurado Processo Administrativo Especial \u2013 PAE, com a finalidade de apurar os fatos, as circunst\u00e2ncias e as eventuais responsabilidades administrativas decorrentes de '+fato+'
 
-§ 1º – A condução do presente PAE ficará a cargo da Procuradoria Geral do Município, nos termos da Lei Complementar Municipal nº 126/2017.
+\u00a7 1\u00ba \u2013 A condu\u00e7\u00e3o do presente PAE ficar\u00e1 a cargo da Procuradoria Geral do Munic\u00edpio, nos termos da Lei Complementar Municipal n\u00ba 126/2017.
 
-§ 2º – Na condução do processo, deverão ser rigorosamente observados os preceitos constitucionais do contraditório e da ampla defesa.
+\u00a7 2\u00ba \u2013 Na condu\u00e7\u00e3o do processo, dever\u00e3o ser rigorosamente observados os preceitos constitucionais do contradit\u00f3rio e da ampla defesa.
 
-Art. 2º – Revogadas as disposições em contrário, esta Portaria entra em vigor na data de sua publicação.
+Art. 2\u00ba \u2013 Revogadas as disposi\u00e7\u00f5es em contr\u00e1rio, esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o.
 
-Fabrício Sanchez Bergamin
+Fabr\u00edcio Sanchez Bergamin
 Prefeito Municipal';
   }
   if(t==='dec'){
-    var arts=gv('_farts')||'Art. 1º – ...
+    var arts=gv('_farts')||'Art. 1\u00ba \u2013 ...
 
-Art. 2º – Este Decreto entra em vigor na data de sua publicação.';
-    return 'DECRETO Nº. '+num+'
+Art. 2\u00ba \u2013 Este Decreto entra em vigor na data de sua publica\u00e7\u00e3o.';
+    return 'DECRETO N\u00ba. '+num+'
 DE '+dt.toUpperCase()+'.
 
 "'+em+'"
@@ -391,21 +391,21 @@ DECRETA:
     var proc=gv('_fproc'),parte=gv('_fparte'),vara=gv('_fvara');
     var advs=gv('_fadvs').split('
 ').filter(function(l){return l.trim();}).join('; ');
-    return 'PROCURAÇÃO "AD JUDICIA"
+    return 'PROCURA\u00c7\u00c3O "AD JUDICIA"
 
-MUNICÍPIO DE EXTREMA, pessoa jurídica de direito público interno, inscrita no CNPJ do MF sob n.º 18.677.591/0001-00, situada na Avenida Delegado Waldemar Gomes Pinto, 1.624, Ponte Nova, Município de Extrema, Estado de Minas Gerais, CEP 37.640-000, neste ato representado pelo Prefeito Municipal, Fabrício Sanchez Bergamin, brasileiro, casado, inscrito no CPF n°. 311.850.858-23, nomeia e constitui como procuradores os advogados: '+advs+'.
+MUNIC\u00cdPIO DE EXTREMA, pessoa jur\u00eddica de direito p\u00fablico interno, inscrita no CNPJ do MF sob n.\u00ba 18.677.591/0001-00, situada na Avenida Delegado Waldemar Gomes Pinto, 1.624, Ponte Nova, Munic\u00edpio de Extrema, Estado de Minas Gerais, CEP 37.640-000, neste ato representado pelo Prefeito Municipal, Fabr\u00edcio Sanchez Bergamin, brasileiro, casado, inscrito no CPF n\u00b0. 311.850.858-23, nomeia e constitui como procuradores os advogados: '+advs+'.
 
-A quem confere amplos poderes para o foro em geral, com a cláusula "ad judicia", em qualquer juízo, instância ou Tribunal, podendo propor contra quem de direito as ações competentes e defendê-lo nas contrárias, seguindo umas e outras, até final decisão, usando os recursos legais e acompanhando-os, podendo ainda substabelecer a outrem, com ou sem reservas de iguais poderes, dando tudo por bom, firme e valioso.
+A quem confere amplos poderes para o foro em geral, com a cl\u00e1usula "ad judicia", em qualquer ju\u00edzo, inst\u00e2ncia ou Tribunal, podendo propor contra quem de direito as a\u00e7\u00f5es competentes e defend\u00ea-lo nas contr\u00e1rias, seguindo umas e outras, at\u00e9 final decis\u00e3o, usando os recursos legais e acompanhando-os, podendo ainda substabelecer a outrem, com ou sem reservas de iguais poderes, dando tudo por bom, firme e valioso.
 
-Especialmente para atuar nos autos do processo nº '+proc+' que lhe move '+parte+', processo em trâmite perante '+vara+'.
+Especialmente para atuar nos autos do processo n\u00ba '+proc+' que lhe move '+parte+', processo em tr\u00e2mite perante '+vara+'.
 
 Extrema, '+datePT(gv('_fd'))+'.
 
-Fabrício Sanchez Bergamin
+Fabr\u00edcio Sanchez Bergamin
 Prefeito Municipal';
   }
   if(t==='ofi'){
-    return 'OFÍCIO Nº '+gv('_fn')+'
+    return 'OF\u00cdCIO N\u00ba '+gv('_fn')+'
 
 Extrema, '+dt+'.
 
@@ -420,7 +420,7 @@ Senhor(a),
 Atenciosamente,
 
 Bruno Bertolotti
-Procurador-Geral do Município de Extrema – MG
+Procurador-Geral do Munic\u00edpio de Extrema \u2013 MG
 OAB/MG 206.199';
   }
   return '';
@@ -430,7 +430,7 @@ function doPreview(){
   var txt=aiText||buildText();
   prevText=txt;
   var box=document.getElementById('prev-box');
-  box.innerHTML='<div style="text-align:center;font-weight:700;color:#c9a84c;margin-bottom:12px;font-size:13px">PREFEITURA MUNICIPAL DE EXTREMA — MG</div>'+
+  box.innerHTML='<div style="text-align:center;font-weight:700;color:#c9a84c;margin-bottom:12px;font-size:13px">PREFEITURA MUNICIPAL DE EXTREMA \u2014 MG</div>'+
     txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
 /g,'<br>');
   box.style.display='block';
@@ -448,7 +448,7 @@ async function doAI(){
     var r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,
-        system:'Você é um assistente jurídico especializado em documentos oficiais da Prefeitura de Extrema - MG. Retorne SOMENTE o documento completo revisado, sem explicações, sem comentários, sem markdown. Mantenha o estilo formal e as fórmulas padrão do documento original.',
+        system:'Voc\u00ea \u00e9 um assistente jur\u00eddico especializado em documentos oficiais da Prefeitura de Extrema - MG. Retorne SOMENTE o documento completo revisado, sem explica\u00e7\u00f5es, sem coment\u00e1rios, sem markdown. Mantenha o estilo formal e as f\u00f3rmulas padr\u00e3o do documento original.',
         messages:[{role:'user',content:'Documento atual:
 
 '+base+'
@@ -462,7 +462,7 @@ Ajuste solicitado: '+prompt}]})
     aiText=res; prevText=res;
     var el=document.getElementById('ai-res');el.textContent=res;el.style.display='block';
     doPreview();
-    ntf('Revisão aplicada pela IA!');
+    ntf('Revis\u00e3o aplicada pela IA!');
   }catch(e){ntf('Erro IA: '+e.message);}
 }
 
@@ -480,14 +480,14 @@ async function doDownload(){
   for(var i=0;i<lines.length;i++){
     var l=lines[i].trim();
     if(!l){children.push(new D.Paragraph({children:[new D.TextRun('')],spacing:{after:0}}));continue;}
-    if(i<3&&/^(PORTARIA|DECRETO|PROCURA|OFÍCIO)/i.test(l)){children.push(par(l,{al:AT.CENTER,bold:true,after:80}));continue;}
+    if(i<3&&/^(PORTARIA|DECRETO|PROCURA|OF\u00cdCIO)/i.test(l)){children.push(par(l,{al:AT.CENTER,bold:true,after:80}));continue;}
     if(i<5&&/^DE d/.test(l)){children.push(par(l,{al:AT.CENTER,bold:true,after:160}));continue;}
     if(l.startsWith('"')&&l.endsWith('"')){children.push(par(l,{al:AT.JUSTIFIED,bold:true,it:true,fi:2880,after:200}));continue;}
     if(/^CONSIDERANDO/.test(l)){children.push(new D.Paragraph({alignment:AT.JUSTIFIED,spacing:{after:160},indent:{firstLine:720},children:[new D.TextRun({text:'CONSIDERANDO',bold:true,font:'Arial',size:22}),new D.TextRun({text:l.replace('CONSIDERANDO',''),font:'Arial',size:22})]}));continue;}
     if(/^(O PREFEITO|DETERMINA:|DECRETA:)/.test(l)){children.push(par(l,{al:AT.CENTER,bold:true,after:160}));continue;}
-    if(/^(Art.|§)/.test(l)){children.push(par(l,{fi:720,after:120}));continue;}
-    if(/^(I{1,3}V?|VI{0,3}|IX|X) [–-]/.test(l)){children.push(par(l,{fi:1440,after:120}));continue;}
-    if(/^(Fabrício|Bruno|- Prefeito|Prefeito)/.test(l)){children.push(par(l,{al:AT.CENTER,bold:/^(Fabrício|Bruno)/.test(l),after:40}));continue;}
+    if(/^(Art.|\u00a7)/.test(l)){children.push(par(l,{fi:720,after:120}));continue;}
+    if(/^(I{1,3}V?|VI{0,3}|IX|X) [\u2013-]/.test(l)){children.push(par(l,{fi:1440,after:120}));continue;}
+    if(/^(Fabr\u00edcio|Bruno|- Prefeito|Prefeito)/.test(l)){children.push(par(l,{al:AT.CENTER,bold:/^(Fabr\u00edcio|Bruno)/.test(l),after:40}));continue;}
     children.push(par(l,{fi:720,after:130}));
   }
   var doc=new D.Document({styles:{default:{document:{run:{font:'Arial',size:22}}}},
