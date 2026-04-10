@@ -5,81 +5,36 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gerador de Documentos - PGM Extrema</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1923;color:#f0ece3;min-height:100vh}
-.hdr{background:#12202f;border-bottom:2px solid #c9a84c;padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
-.hdr-t{font-size:18px;font-weight:800;color:#c9a84c}
-.hdr-s{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
-.layout{display:flex;min-height:calc(100vh - 58px)}
-.sb{width:220px;min-width:220px;background:#12202f;border-right:1px solid rgba(255,255,255,.06);padding:16px;display:flex;flex-direction:column;gap:6px}
-.slbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);font-weight:700;margin-bottom:6px}
-.sbtn{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:11px 13px;cursor:pointer;text-align:left;color:#f0ece3;width:100%}
-.sbtn.on,.sbtn:hover{border-color:#c9a84c;background:#1f2e42}
-.sbtn-n{font-size:12px;font-weight:600}
-.sbtn-d{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
-.mn{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;max-width:860px}
-.card{background:#1a2535;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:20px}
-.ct{font-size:12px;font-weight:700;color:#c9a84c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.g1{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}
-.fl label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.45);font-weight:600;display:block;margin-bottom:4px}
-.ii{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;color:#f0ece3;font-size:12px;font-family:inherit;outline:none}
-.ii:focus{border-color:#c9a84c}
-select.ii option{background:#1a2535}
-textarea.ii{resize:vertical}
-.srv{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;margin-bottom:8px;position:relative}
-.srv-t{font-size:10px;color:#c9a84c;font-weight:700;text-transform:uppercase;margin-bottom:8px}
-.srv-rm{position:absolute;top:8px;right:8px;background:rgba(224,92,92,.15);border:1px solid rgba(224,92,92,.3);color:#e05c5c;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px}
-.add-srv{background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.4);border-radius:8px;padding:9px;color:#c9a84c;cursor:pointer;width:100%;font-size:12px;font-weight:700;margin-top:6px}
-.ai-card{background:rgba(46,117,182,.06);border:1px solid rgba(46,117,182,.2);border-radius:10px;padding:16px}
-.ai-lbl{font-size:11px;color:#4a90d9;font-weight:700;text-transform:uppercase;margin-bottom:8px}
-.ai-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;color:#f0ece3;font-size:12px;font-family:inherit;resize:vertical;outline:none}
-.ai-ta:focus{border-color:#4a90d9}
-.ai-res{display:none;margin-top:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:12px;font-size:12px;line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto}
-.pbox{display:none;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;max-height:450px;overflow-y:auto}
-.br{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.btn{padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none}
-.btn-g{background:#c9a84c;color:#0f1923}.btn-g:hover{background:#e0b94f}
-.btn-ai{background:rgba(46,117,182,.2);color:#4a90d9;border:1px solid rgba(46,117,182,.4)}
-.btn-dl{background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.35)}
-.btn-dl:disabled{opacity:.4;cursor:not-allowed}
-.btn-bk{background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)}
-.toast{position:fixed;bottom:20px;right:20px;background:#1a2535;border:1px solid #c9a84c;border-radius:9px;padding:11px 18px;font-size:12px;font-weight:600;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}
-.toast.show{transform:translateY(0);opacity:1}
-</style>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1923;color:#f0ece3;min-height:100vh}.hdr{background:#12202f;border-bottom:2px solid #c9a84c;padding:14px 28px;display:flex;align-items:center;justify-content:space-between}.hdr-t{font-size:18px;font-weight:800;color:#c9a84c}.hdr-s{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}.layout{display:flex;min-height:calc(100vh - 58px)}.sb{width:220px;min-width:220px;background:#12202f;border-right:1px solid rgba(255,255,255,.06);padding:16px;display:flex;flex-direction:column;gap:6px}.slbl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);font-weight:700;margin-bottom:6px}.sbtn{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:11px 13px;cursor:pointer;text-align:left;color:#f0ece3;width:100%}.sbtn.on,.sbtn:hover{border-color:#c9a84c;background:#1f2e42}.sbtn-n{font-size:12px;font-weight:600}.sbtn-d{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}.mn{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;max-width:860px}.card{background:#1a2535;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:20px}.ct{font-size:12px;font-weight:700;color:#c9a84c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.g1{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.fl label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.45);font-weight:600;display:block;margin-bottom:4px}.ii{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;color:#f0ece3;font-size:12px;font-family:inherit;outline:none}.ii:focus{border-color:#c9a84c}select.ii option{background:#1a2535}textarea.ii{resize:vertical}.srv{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;margin-bottom:8px;position:relative}.srv-t{font-size:10px;color:#c9a84c;font-weight:700;text-transform:uppercase;margin-bottom:8px}.srv-rm{position:absolute;top:8px;right:8px;background:rgba(224,92,92,.15);border:1px solid rgba(224,92,92,.3);color:#e05c5c;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px}.add-srv{background:rgba(201,168,76,.08);border:1px dashed rgba(201,168,76,.4);border-radius:8px;padding:9px;color:#c9a84c;cursor:pointer;width:100%;font-size:12px;font-weight:700;margin-top:6px}.ai-card{background:rgba(46,117,182,.06);border:1px solid rgba(46,117,182,.2);border-radius:10px;padding:16px}.ai-lbl{font-size:11px;color:#4a90d9;font-weight:700;text-transform:uppercase;margin-bottom:8px}.ai-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px 11px;color:#f0ece3;font-size:12px;font-family:inherit;resize:vertical;outline:none}.ai-ta:focus{border-color:#4a90d9}.ai-res{display:none;margin-top:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:12px;font-size:12px;line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto}.pbox{display:none;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;max-height:450px;overflow-y:auto}.br{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.btn{padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none}.btn-g{background:#c9a84c;color:#0f1923}.btn-g:hover{background:#e0b94f}.btn-ai{background:rgba(46,117,182,.2);color:#4a90d9;border:1px solid rgba(46,117,182,.4)}.btn-dl{background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.35)}.btn-dl:disabled{opacity:.4;cursor:not-allowed}.btn-bk{background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)}.toast{position:fixed;bottom:20px;right:20px;background:#1a2535;border:1px solid #c9a84c;border-radius:9px;padding:11px 18px;font-size:12px;font-weight:600;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}.toast.show{transform:translateY(0);opacity:1}</style>
 </head>
 <body>
 <div class="hdr">
-  <div>
-    <div class="hdr-t" id="ht"></div>
-    <div class="hdr-s" id="hs"></div>
-  </div>
-  <button class="btn btn-bk" onclick="window.close()" id="hbk"></button>
+  <div><div class="hdr-t">Gerador de Documentos &#8212; PGM Extrema</div><div class="hdr-s">Procuradoria-Geral do Munic&#237;pio de Extrema &#8212; MG</div></div>
+  <button class="btn btn-bk" onclick="window.close()">&#8592; Fechar</button>
 </div>
 <div class="layout">
   <div class="sb">
-    <div class="slbl" id="sb0"></div>
-    <button class="sbtn on" id="sb-nom" onclick="sel('nom')"><div class="sbtn-n" id="sn-nom"></div><div class="sbtn-d" id="sd-nom"></div></button>
-    <button class="sbtn" id="sb-exo" onclick="sel('exo')"><div class="sbtn-n" id="sn-exo"></div><div class="sbtn-d" id="sd-exo"></div></button>
-    <button class="sbtn" id="sb-pae" onclick="sel('pae')"><div class="sbtn-n" id="sn-pae"></div><div class="sbtn-d" id="sd-pae"></div></button>
-    <button class="sbtn" id="sb-dec" onclick="sel('dec')"><div class="sbtn-n" id="sn-dec"></div><div class="sbtn-d" id="sd-dec"></div></button>
-    <button class="sbtn" id="sb-pro" onclick="sel('pro')"><div class="sbtn-n" id="sn-pro"></div><div class="sbtn-d" id="sd-pro"></div></button>
-    <button class="sbtn" id="sb-ofi" onclick="sel('ofi')"><div class="sbtn-n" id="sn-ofi"></div><div class="sbtn-d" id="sd-ofi"></div></button>
+    <div class="slbl">Tipo de Documento</div>
+    <button class="sbtn on" id="sb-nom" onclick="sel('nom')"><div class="sbtn-n">Portaria de Nomea&#231;&#227;o</div><div class="sbtn-d">Cargo em comiss&#227;o</div></button>
+    <button class="sbtn" id="sb-exo" onclick="sel('exo')"><div class="sbtn-n">Portaria de Exonera&#231;&#227;o</div><div class="sbtn-d">Cargo efetivo / comiss&#227;o</div></button>
+    <button class="sbtn" id="sb-pae" onclick="sel('pae')"><div class="sbtn-n">Portaria de PAE</div><div class="sbtn-d">Processo Administrativo</div></button>
+    <button class="sbtn" id="sb-dec" onclick="sel('dec')"><div class="sbtn-n">Decreto</div><div class="sbtn-d">Decreto municipal</div></button>
+    <button class="sbtn" id="sb-pro" onclick="sel('pro')"><div class="sbtn-n">Procura&#231;&#227;o Ad Judicia</div><div class="sbtn-d">Representa&#231;&#227;o judicial</div></button>
+    <button class="sbtn" id="sb-ofi" onclick="sel('ofi')"><div class="sbtn-n">Of&#237;cio</div><div class="sbtn-d">Correspond&#234;ncia oficial</div></button>
   </div>
   <div class="mn">
     <div class="card"><div class="ct" id="ftitle"></div><div id="farea"></div></div>
     <div class="ai-card">
-      <div class="ai-lbl" id="ailbl"></div>
-      <textarea class="ai-ta" id="ai-inp" rows="3"></textarea>
+      <div class="ai-lbl">&#129302; Revis&#227;o por IA (opcional)</div>
+      <textarea class="ai-ta" id="ai-inp" rows="3" placeholder="Ex: Adicione um considerando sobre a CI n&#186; 28/2026. Altere a data do inciso I para 15/04/2026..."></textarea>
       <div class="ai-res" id="ai-res"></div>
-      <div style="margin-top:8px"><button class="btn btn-ai" id="aibtn" onclick="doAI()"></button></div>
+      <div style="margin-top:8px"><button class="btn btn-ai" onclick="doAI()">&#129302; Aplicar revis&#227;o por IA</button></div>
     </div>
     <div class="card">
-      <div class="ct" id="pdlbl"></div>
+      <div class="ct">Preview e Download</div>
       <div class="br">
-        <button class="btn btn-g" id="prvbtn" onclick="doPrev()"></button>
-        <button class="btn btn-dl" id="dlbtn" onclick="doDL()" disabled></button>
+        <button class="btn btn-g" onclick="doPrev()">&#128065; Gerar Preview</button>
+        <button class="btn btn-dl" id="dlbtn" onclick="doDL()" disabled>&#128229; Baixar .docx</button>
       </div>
       <div class="pbox" id="pbox"></div>
     </div>
@@ -87,104 +42,39 @@ textarea.ii{resize:vertical}
 </div>
 <div class="toast" id="toast"></div>
 <script>
-// All text via unicode escapes - zero accented chars in source code
-var T = {
-  hdr: "Gerador de Documentos \u2014 PGM Extrema",
-  sub: "Procuradoria-Geral do Munic\u00edpio de Extrema \u2014 MG",
-  bk: "\u2190 Fechar",
-  sblbl: "Tipo de Documento",
-  nom_n: "Portaria de Nomea\u00e7\u00e3o", nom_d: "Cargo em comiss\u00e3o",
-  exo_n: "Portaria de Exonera\u00e7\u00e3o", exo_d: "Cargo efetivo / comiss\u00e3o",
-  pae_n: "Portaria de PAE", pae_d: "Processo Administrativo",
-  dec_n: "Decreto", dec_d: "Decreto municipal",
-  pro_n: "Procura\u00e7\u00e3o Ad Judicia", pro_d: "Representa\u00e7\u00e3o judicial",
-  ofi_n: "Of\u00edcio", ofi_d: "Correspond\u00eancia oficial",
-  ailbl: "\ud83e\udd16 Revis\u00e3o por IA (opcional)",
-  aiph: "Ex: Adicione um considerando sobre a CI n\u00ba 28/2026. Altere a data do inciso I para 15/04/2026...",
-  aibtn: "\ud83e\udd16 Aplicar revis\u00e3o por IA",
-  pdlbl: "Preview e Download",
-  prvbtn: "\ud83d\udc41 Gerar Preview",
-  dlbtn: "\ud83d\udce5 Baixar .docx",
-  meses: ["","janeiro","fevereiro","mar\u00e7o","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"],
-  ROMS: ["I","II","III","IV","V","VI","VII","VIII","IX","X"],
-  nom_ementa: "Disp\u00f5e sobre a nomea\u00e7\u00e3o de servidores para cargos de provimento em comiss\u00e3o no \u00e2mbito da Administra\u00e7\u00e3o P\u00fablica Municipal.",
-  exo_ementa: "Disp\u00f5e sobre a exonera\u00e7\u00e3o de servidores no \u00e2mbito da Administra\u00e7\u00e3o P\u00fablica Municipal, e d\u00e1 outras provid\u00eancias.",
-  pae_ementa: "Determina a instaura\u00e7\u00e3o de Processo Administrativo Especial para apura\u00e7\u00e3o de fatos e responsabilidades, e d\u00e1 outras provid\u00eancias.",
-  prefeito: "
 
-O PREFEITO DO MUNIC\u00cdPIO DE EXTREMA, Senhor Fabr\u00edcio Sanchez Bergamin, no uso de suas atribui\u00e7\u00f5es legais,",
-  assina: "
-
-Fabr\u00edcio Sanchez Bergamin
-- Prefeito Municipal -",
-  advs: "Bruno Bertolotti, Procurador Geral do Munic\u00edpio, OAB/MG 206.199
-Natanael Jairo Cazzo, OAB/MG 140.842
-Lucas Mendes Clemonte, OAB/MG 186.907
-Felipe Jos\u00e9 Faria do Nascimento, OAB/MG 221.039
-Mayara Cardoso de Oliveira, OAB/MG 231.355"
-};
-
-// Set static text
-document.getElementById("ht").textContent = T.hdr;
-document.getElementById("hs").textContent = T.sub;
-document.getElementById("hbk").textContent = T.bk;
-document.getElementById("sb0").textContent = T.sblbl;
-["nom","exo","pae","dec","pro","ofi"].forEach(function(k) {
-  document.getElementById("sn-"+k).textContent = T[k+"_n"];
-  document.getElementById("sd-"+k).textContent = T[k+"_d"];
-});
-document.getElementById("ailbl").textContent = T.ailbl;
-document.getElementById("ai-inp").placeholder = T.aiph;
-document.getElementById("aibtn").textContent = T.aibtn;
-document.getElementById("pdlbl").textContent = T.pdlbl;
-document.getElementById("prvbtn").textContent = T.prvbtn;
-document.getElementById("dlbtn").textContent = T.dlbtn;
-
-var curDoc = "nom";
-var prevTxt = "";
-var aiTxt = "";
-var sN = 0;
+var MESES = ["","janeiro","fevereiro","mar\u00e7o","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+var ROMS = ["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+var curDoc = "nom", prevTxt = "", aiTxt = "", sN = 0;
 
 function ntf(m) {
   var t = document.getElementById("toast");
-  t.textContent = m;
-  t.classList.add("show");
+  t.textContent = m; t.classList.add("show");
   setTimeout(function() { t.classList.remove("show"); }, 2500);
 }
-
-function gv(id) {
-  var e = document.getElementById(id);
-  return e ? e.value.trim() : "";
-}
-
-function today() {
-  return new Date().toISOString().split("T")[0];
-}
-
+function gv(id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; }
+function today() { return new Date().toISOString().split("T")[0]; }
 function datePT(iso) {
   if (!iso) return "";
   var p = iso.split("-");
-  return parseInt(p[2]) + " de " + T.meses[parseInt(p[1])] + " de " + p[0];
+  return parseInt(p[2]) + " de " + MESES[parseInt(p[1])] + " de " + p[0];
 }
-
 function mkEl(tag, cls, txt) {
   var e = document.createElement(tag);
   if (cls) e.className = cls;
-  if (txt) e.textContent = txt;
+  if (txt !== undefined) e.textContent = txt;
   return e;
 }
-
-function mkInput(id, inputType, ph, val, cls) {
+function mkInput(id, itype, ph, val, cls) {
   var e = document.createElement("input");
-  e.type = inputType || "text";
+  e.type = itype || "text";
   e.className = "ii" + (cls ? " " + cls : "");
   if (id) e.id = id;
   if (ph) e.placeholder = ph;
-  if (val !== undefined && val !== null) e.value = val;
+  if (val !== null && val !== undefined) e.value = val;
   return e;
 }
-
-function mkTextarea(id, rows, ph, val, cls) {
+function mkArea(id, rows, ph, val, cls) {
   var e = document.createElement("textarea");
   e.className = "ii" + (cls ? " " + cls : "");
   e.rows = rows || 3;
@@ -193,336 +83,181 @@ function mkTextarea(id, rows, ph, val, cls) {
   if (val) e.value = val;
   return e;
 }
-
-function mkSelect(cls, opts) {
+function mkSel(cls, opts) {
   var s = document.createElement("select");
   s.className = "ii " + cls;
-  opts.forEach(function(o) {
-    var op = document.createElement("option");
-    op.value = o[0];
-    op.textContent = o[1];
-    s.appendChild(op);
-  });
+  opts.forEach(function(o) { var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; s.appendChild(op); });
   return s;
 }
-
 function fld(lbl, el) {
-  var d = mkEl("div", "fl");
-  var l = mkEl("label", "", lbl);
-  d.appendChild(l);
-  d.appendChild(el);
-  return d;
+  var d = mkEl("div", "fl"); var l = mkEl("label", "", lbl); d.appendChild(l); d.appendChild(el); return d;
 }
+function row2(a, b) { var d = mkEl("div", "g2"); d.appendChild(a); d.appendChild(b); return d; }
+function row1(a) { var d = mkEl("div", "g1"); d.appendChild(a); return d; }
 
-function row2(a, b) {
-  var d = mkEl("div", "g2");
-  d.appendChild(a);
-  d.appendChild(b);
-  return d;
-}
-
-function row1(a) {
-  var d = mkEl("div", "g1");
-  d.appendChild(a);
-  return d;
+function addSrvContainer(label) {
+  var wrap = mkEl("div", "");
+  var lbl = mkEl("div", "", label);
+  lbl.style.cssText = "font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;margin:10px 0 6px";
+  wrap.appendChild(lbl);
+  var sc = mkEl("div", ""); sc.id = "srvs"; wrap.appendChild(sc);
+  var ab = mkEl("button", "add-srv", "+ Adicionar Servidor"); ab.onclick = addSrv; wrap.appendChild(ab);
+  return wrap;
 }
 
 function buildNom() {
   var f = document.createDocumentFragment();
-  f.appendChild(row2(
-    fld("N\u00famero da Portaria", mkInput("_fn", "number", "317")),
-    fld("Data", mkInput("_fd", "date", "", today()))
-  ));
-  f.appendChild(row1(fld("Ementa", mkInput("_fe", "text", "", T.nom_ementa))));
-  f.appendChild(row1(fld("Considerandos (um por linha)", mkTextarea("_fc", 3, "Ex: a Comunica\u00e7\u00e3o Interna n\u00ba 28/2026..."))));
-  var wrap = mkEl("div", "");
-  wrap.appendChild(mkEl("div", "", "Servidores Nomeados")).style.cssText = "font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;margin:10px 0 6px";
-  var sc = mkEl("div", ""); sc.id = "srvs"; wrap.appendChild(sc);
-  var ab = mkEl("button", "add-srv", "+ Adicionar Servidor");
-  ab.onclick = addSrv; wrap.appendChild(ab);
-  f.appendChild(wrap);
+  f.appendChild(row2(fld("N\u00famero da Portaria", mkInput("_fn","number","317")), fld("Data", mkInput("_fd","date","",today()))));
+  f.appendChild(row1(fld("Ementa", mkInput("_fe","text","","Disp\u00f5e sobre a nomea\u00e7\u00e3o de servidores para cargos de provimento em comiss\u00e3o no \u00e2mbito da Administra\u00e7\u00e3o P\u00fablica Municipal."))));
+  f.appendChild(row1(fld("Considerandos (um por linha)", mkArea("_fc",3,"Ex: a Comunica\u00e7\u00e3o Interna n\u00ba 28/2026..."))));
+  f.appendChild(addSrvContainer("Servidores Nomeados"));
   return f;
 }
-
 function buildExo() {
   var f = document.createDocumentFragment();
-  f.appendChild(row2(
-    fld("N\u00famero da Portaria", mkInput("_fn", "number", "319")),
-    fld("Data", mkInput("_fd", "date", "", today()))
-  ));
-  f.appendChild(row1(fld("Ementa", mkInput("_fe", "text", "", T.exo_ementa))));
-  f.appendChild(row1(fld("Considerandos (um por linha)", mkTextarea("_fc", 3, "Ex: os Of\u00edcios n\u00ba 142/2026..."))));
-  var wrap = mkEl("div", "");
-  wrap.appendChild(mkEl("div", "", "Servidores Exonerados")).style.cssText = "font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;margin:10px 0 6px";
-  var sc = mkEl("div", ""); sc.id = "srvs"; wrap.appendChild(sc);
-  var ab = mkEl("button", "add-srv", "+ Adicionar Servidor");
-  ab.onclick = addSrv; wrap.appendChild(ab);
-  f.appendChild(wrap);
+  f.appendChild(row2(fld("N\u00famero da Portaria", mkInput("_fn","number","319")), fld("Data", mkInput("_fd","date","",today()))));
+  f.appendChild(row1(fld("Ementa", mkInput("_fe","text","","Disp\u00f5e sobre a exonera\u00e7\u00e3o de servidores no \u00e2mbito da Administra\u00e7\u00e3o P\u00fablica Municipal, e d\u00e1 outras provid\u00eancias."))));
+  f.appendChild(row1(fld("Considerandos", mkArea("_fc",3,"Ex: os Of\u00edcios n\u00ba 142/2026..."))));
+  f.appendChild(addSrvContainer("Servidores Exonerados"));
   return f;
 }
-
 function buildPAE() {
   var f = document.createDocumentFragment();
-  f.appendChild(row2(
-    fld("N\u00famero da Portaria", mkInput("_fn", "number", "318")),
-    fld("Data", mkInput("_fd", "date", "", today()))
-  ));
-  f.appendChild(row1(fld("Ementa", mkInput("_fe", "text", "", T.pae_ementa))));
-  f.appendChild(row2(
-    fld("N\u00ba Boletim de Ocorr\u00eancia", mkInput("_fbo", "text", "Ex: 2026-013584712-001")),
-    fld("Secretaria Envolvida", mkInput("_fsec", "text", "Ex: Secretaria Municipal de Obras"))
-  ));
-  f.appendChild(row1(fld("Descri\u00e7\u00e3o do Fato (Art. 1\u00ba)", mkTextarea("_ffato", 4, "Descreva o fato, local e o dano causado..."))));
-  f.appendChild(row1(fld("Considerandos Adicionais", mkTextarea("_fc", 3, ""))));
+  f.appendChild(row2(fld("N\u00famero da Portaria", mkInput("_fn","number","318")), fld("Data", mkInput("_fd","date","",today()))));
+  f.appendChild(row1(fld("Ementa", mkInput("_fe","text","","Determina a instaura\u00e7\u00e3o de Processo Administrativo Especial para apura\u00e7\u00e3o de fatos e responsabilidades, e d\u00e1 outras provid\u00eancias."))));
+  f.appendChild(row2(fld("N\u00ba Boletim de Ocorr\u00eancia", mkInput("_fbo","text","Ex: 2026-013584712-001")), fld("Secretaria Envolvida", mkInput("_fsec","text","Ex: Secretaria Municipal de Obras"))));
+  f.appendChild(row1(fld("Descri\u00e7\u00e3o do Fato (Art. 1\u00ba)", mkArea("_ffato",4,"Descreva o fato, local e o dano causado..."))));
+  f.appendChild(row1(fld("Considerandos Adicionais", mkArea("_fc",3,""))));
   return f;
 }
-
 function buildDec() {
   var f = document.createDocumentFragment();
-  f.appendChild(row2(
-    fld("N\u00famero do Decreto", mkInput("_fn", "text", "Ex: 5.104")),
-    fld("Data", mkInput("_fd", "date", "", today()))
-  ));
-  f.appendChild(row1(fld("Ementa", mkInput("_fe", "text", "Ex: Institui a Pol\u00edtica Municipal de X..."))));
-  f.appendChild(row1(fld("Considerandos (um por linha)", mkTextarea("_fc", 4, "Ex: o of\u00edcio n\u00ba 199/2026..."))));
-  f.appendChild(row1(fld("Artigos do Decreto", mkTextarea("_farts", 6, "Art. 1\u00ba \u2013 ...
+  f.appendChild(row2(fld("N\u00famero do Decreto", mkInput("_fn","text","Ex: 5.104")), fld("Data", mkInput("_fd","date","",today()))));
+  f.appendChild(row1(fld("Ementa", mkInput("_fe","text","Ex: Institui a Pol\u00edtica Municipal de X..."))));
+  f.appendChild(row1(fld("Considerandos (um por linha)", mkArea("_fc",4,"Ex: o of\u00edcio n\u00ba 199/2026..."))));
+  f.appendChild(row1(fld("Artigos do Decreto", mkArea("_farts",6,"Art. 1\u00ba \u2013 ...
 Art. 2\u00ba \u2013 Este Decreto entra em vigor na data de sua publica\u00e7\u00e3o."))));
   return f;
 }
-
 function buildPro() {
   var f = document.createDocumentFragment();
-  f.appendChild(row2(
-    fld("Data", mkInput("_fd", "date", "", today())),
-    fld("N\u00famero do Processo", mkInput("_fproc", "text", "Ex: 5005562-17.2025.8.13.0251"))
-  ));
-  f.appendChild(row1(fld("Vara / Ju\u00edzo", mkInput("_fvara", "text", "Ex: 2\u00aa VARA C\u00cdVEL DA COMARCA DE EXTREMA/MG"))));
-  f.appendChild(row1(fld("Parte Contr\u00e1ria", mkInput("_fparte", "text", "Ex: COMPANHIA DE SANEAMENTO DE MINAS GERAIS \u2013 COPASA MG"))));
-  f.appendChild(row1(fld("Advogados Constitu\u00eddos (um por linha)", mkTextarea("_fadvs", 5, "", T.advs))));
+  f.appendChild(row2(fld("Data", mkInput("_fd","date","",today())), fld("N\u00famero do Processo", mkInput("_fproc","text","Ex: 5005562-17.2025.8.13.0251"))));
+  f.appendChild(row1(fld("Vara / Ju\u00edzo", mkInput("_fvara","text","Ex: 2\u00aa VARA C\u00cdVEL DA COMARCA DE EXTREMA/MG"))));
+  f.appendChild(row1(fld("Parte Contr\u00e1ria", mkInput("_fparte","text","Ex: COMPANHIA DE SANEAMENTO DE MINAS GERAIS \u2013 COPASA MG"))));
+  f.appendChild(row1(fld("Advogados (um por linha)", mkArea("_fadvs",5,"","Bruno Bertolotti, Procurador Geral do Munic\u00edpio, OAB/MG 206.199
+Natanael Jairo Cazzo, OAB/MG 140.842
+Lucas Mendes Clemonte, OAB/MG 186.907
+Felipe Jos\u00e9 Faria do Nascimento, OAB/MG 221.039
+Mayara Cardoso de Oliveira, OAB/MG 231.355"))));
   return f;
 }
-
 function buildOfi() {
   var f = document.createDocumentFragment();
-  f.appendChild(row2(
-    fld("N\u00famero do Of\u00edcio", mkInput("_fn", "text", "Ex: 138/2026")),
-    fld("Data", mkInput("_fd", "date", "", today()))
-  ));
-  f.appendChild(row1(fld("Destinat\u00e1rio", mkInput("_fdest", "text", "Ex: Ilmo. Sr. Secret\u00e1rio Municipal de Educa\u00e7\u00e3o"))));
-  f.appendChild(row1(fld("Assunto", mkInput("_fassunto", "text", "Ex: Solicita\u00e7\u00e3o de informa\u00e7\u00f5es sobre..."))));
-  f.appendChild(row1(fld("Corpo do Of\u00edcio", mkTextarea("_fcorpo", 8, "Texto do of\u00edcio..."))));
+  f.appendChild(row2(fld("N\u00famero do Of\u00edcio", mkInput("_fn","text","Ex: 138/2026")), fld("Data", mkInput("_fd","date","",today()))));
+  f.appendChild(row1(fld("Destinat\u00e1rio", mkInput("_fdest","text","Ex: Ilmo. Sr. Secret\u00e1rio Municipal de Educa\u00e7\u00e3o"))));
+  f.appendChild(row1(fld("Assunto", mkInput("_fassunto","text","Ex: Solicita\u00e7\u00e3o de informa\u00e7\u00f5es..."))));
+  f.appendChild(row1(fld("Corpo do Of\u00edcio", mkArea("_fcorpo",8,"Texto do of\u00edcio..."))));
   return f;
 }
 
-var BUILDERS = {nom: buildNom, exo: buildExo, pae: buildPAE, dec: buildDec, pro: buildPro, ofi: buildOfi};
+var BUILDERS = {nom:buildNom, exo:buildExo, pae:buildPAE, dec:buildDec, pro:buildPro, ofi:buildOfi};
+var TITLES = {
+  nom:"Portaria de Nomea\u00e7\u00e3o", exo:"Portaria de Exonera\u00e7\u00e3o",
+  pae:"Portaria de PAE", dec:"Decreto",
+  pro:"Procura\u00e7\u00e3o Ad Judicia", ofi:"Of\u00edcio"
+};
 
 function sel(t) {
   curDoc = t; prevTxt = ""; aiTxt = ""; sN = 0;
-  document.getElementById("ftitle").textContent = T[t + "_n"];
-  var fa = document.getElementById("farea");
-  fa.innerHTML = "";
-  fa.appendChild(BUILDERS[t]());
+  document.getElementById("ftitle").textContent = TITLES[t];
+  var fa = document.getElementById("farea"); fa.innerHTML = ""; fa.appendChild(BUILDERS[t]());
   document.getElementById("pbox").style.display = "none";
   document.getElementById("dlbtn").disabled = true;
   document.getElementById("ai-res").style.display = "none";
   document.querySelectorAll(".sbtn").forEach(function(b) { b.classList.remove("on"); });
-  var sb = document.getElementById("sb-" + t);
-  if (sb) sb.classList.add("on");
+  var sb = document.getElementById("sb-" + t); if (sb) sb.classList.add("on");
   if (t === "nom" || t === "exo") addSrv();
 }
 
 function addSrv() {
-  var c = document.getElementById("srvs");
-  if (!c) return;
-  sN++;
-  var n = sN;
-  var idx = T.ROMS[c.children.length] || "?";
+  var c = document.getElementById("srvs"); if (!c) return;
+  sN++; var n = sN;
+  var idx = ROMS[c.children.length] || "?";
   var d = mkEl("div", "srv"); d.id = "s" + n;
   var hl = mkEl("div", "srv-t", idx + " \u2013 Servidor"); d.appendChild(hl);
   var rm = mkEl("button", "srv-rm", "\u2715");
   rm.onclick = function() { document.getElementById("s" + n).remove(); };
   d.appendChild(rm);
   if (curDoc === "nom") {
-    d.appendChild(row1(fld("Nome Completo (MAIUSCULAS)", mkInput("", "text", "Ex: DANIELA MORAIS BARROS", null, "sN"))));
-    d.appendChild(row2(
-      fld("CPF (mascarado)", mkInput("", "text", "Ex: ***.356.94*-**", null, "sC")),
-      fld("Fun\u00e7\u00e3o / Cargo", mkInput("", "text", "Ex: Chefe de Divis\u00e3o", null, "sF"))
-    ));
-    d.appendChild(row1(fld("Secretaria", mkInput("", "text", "Ex: Secretaria Municipal de Meio Ambiente", null, "sS"))));
-    d.appendChild(row1(fld("Data de Efeito", mkInput("", "date", "", null, "sE"))));
+    d.appendChild(row1(fld("Nome Completo (MAIUSCULAS)", mkInput("","text","Ex: DANIELA MORAIS BARROS",null,"sN"))));
+    d.appendChild(row2(fld("CPF (mascarado)", mkInput("","text","Ex: ***.356.94*-**",null,"sC")), fld("Fun\u00e7\u00e3o / Cargo", mkInput("","text","Ex: Chefe de Divis\u00e3o",null,"sF"))));
+    d.appendChild(row1(fld("Secretaria", mkInput("","text","Ex: Secretaria Municipal de Meio Ambiente",null,"sS"))));
+    d.appendChild(row1(fld("Data de Efeito", mkInput("","date","",null,"sE"))));
   } else {
-    d.appendChild(row1(fld("Nome Completo (MAIUSCULAS)", mkInput("", "text", "Ex: ANDRE APARECIDO BORGES", null, "sN"))));
+    d.appendChild(row1(fld("Nome Completo (MAIUSCULAS)", mkInput("","text","Ex: ANDRE APARECIDO BORGES",null,"sN"))));
     d.appendChild(row2(
-      fld("Tipo", mkSelect("sT", [["cargo efetivo","Cargo Efetivo"],["cargo em comiss\u00e3o","Cargo em Comiss\u00e3o"],["fun\u00e7\u00e3o de confian\u00e7a","Fun\u00e7\u00e3o de Confian\u00e7a"]])),
-      fld("A pedido?", mkSelect("sP", [["sim","Sim"],["nao","N\u00e3o"]]))
+      fld("Tipo", mkSel("sT",[["cargo efetivo","Cargo Efetivo"],["cargo em comiss\u00e3o","Cargo em Comiss\u00e3o"],["fun\u00e7\u00e3o de confian\u00e7a","Fun\u00e7\u00e3o de Confian\u00e7a"]])),
+      fld("A pedido?", mkSel("sP",[["sim","Sim"],["nao","N\u00e3o"]]))
     ));
-    d.appendChild(row2(
-      fld("Cargo / Fun\u00e7\u00e3o", mkInput("", "text", "Ex: Agente da Dengue", null, "sF")),
-      fld("Data de Efeito", mkInput("", "date", "", null, "sE"))
-    ));
-    d.appendChild(row1(fld("Secretaria", mkInput("", "text", "Ex: Secretaria Municipal de Sa\u00fade", null, "sS"))));
+    d.appendChild(row2(fld("Cargo / Fun\u00e7\u00e3o", mkInput("","text","Ex: Agente da Dengue",null,"sF")), fld("Data de Efeito", mkInput("","date","",null,"sE"))));
+    d.appendChild(row1(fld("Secretaria", mkInput("","text","Ex: Secretaria Municipal de Sa\u00fade",null,"sS"))));
   }
   c.appendChild(d);
 }
 
 function buildText() {
-  var t = curDoc;
-  var num = gv("_fn"), dt = datePT(gv("_fd")), em = gv("_fe"), co = gv("_fc");
-  var conds = co
-    ? co.split("
-").filter(function(l) { return l.trim(); }).map(function(l) { return "CONSIDERANDO " + l.trim(); }).join("
+  var t = curDoc, num = gv("_fn"), dt = datePT(gv("_fd")), em = gv("_fe"), co = gv("_fc");
+  var pref = "
 
-")
-    : "CONSIDERANDO a solicita\u00e7\u00e3o formulada pela Administra\u00e7\u00e3o Municipal;";
+O PREFEITO DO MUNIC\u00cdPIO DE EXTREMA, Senhor Fabr\u00edcio Sanchez Bergamin, no uso de suas atribui\u00e7\u00f5es legais,";
+  var ass = "
 
+Fabr\u00edcio Sanchez Bergamin
+- Prefeito Municipal -";
+  var conds = co ? co.split("\n").filter(function(l){return l.trim();}).map(function(l){return"CONSIDERANDO "+l.trim();}).join("\n\n") : "CONSIDERANDO a solicita\u00e7\u00e3o formulada pela Administra\u00e7\u00e3o Municipal;";
   if (t === "nom") {
     var linhas = Array.from(document.querySelectorAll("#srvs .srv")).map(function(r, i) {
-      var nm = r.querySelector(".sN").value.trim();
-      var cpf = r.querySelector(".sC").value.trim();
-      var fn = r.querySelector(".sF").value.trim();
-      var sec = r.querySelector(".sS").value.trim();
+      var nm=r.querySelector(".sN").value.trim(), cpf=r.querySelector(".sC").value.trim(), fn=r.querySelector(".sF").value.trim(), sec=r.querySelector(".sS").value.trim();
       var ef = r.querySelector(".sE").value ? datePT(r.querySelector(".sE").value) : "";
-      var g = nm.slice(-1) === "A" ? "a" : "o";
-      return T.ROMS[i] + " \u2013 " + nm + ", inscrit" + g + " no CPF n\u00ba " + cpf + ", para exercer a fun\u00e7\u00e3o de " + fn + ", vinculad" + g + " \u00e0 " + sec + ", com efeitos a partir de " + ef + ";";
-    }).join("
-
-");
-    return "PORTARIA N\u00ba. " + num + "
-DE " + dt.toUpperCase() + ".
-
-"" + em + ""
-
-" + conds + T.prefeito + "
-
-DETERMINA:
-
-Art. 1\u00ba \u2013 Ficam nomeados para os cargos em comiss\u00e3o os seguintes servidores:
-
-" + linhas + "
-
-Art. 2\u00ba \u2013 Esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o, produzindo efeitos nas datas espec\u00edficas, ficando revogadas as disposi\u00e7\u00f5es em contr\u00e1rio." + T.assina;
+      var g = nm.slice(-1)==="A" ? "a" : "o";
+      return ROMS[i]+" \u2013 "+nm+", inscrit"+g+" no CPF n\u00ba "+cpf+", para exercer a fun\u00e7\u00e3o de "+fn+", vinculad"+g+" \u00e0 "+sec+", com efeitos a partir de "+ef+";";
+    }).join("\n\n");
+    return "PORTARIA N\u00ba. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+conds+pref+"\n\nDETERMINA:\n\nArt. 1\u00ba \u2013 Ficam nomeados para os cargos em comiss\u00e3o os seguintes servidores:\n\n"+linhas+"\n\nArt. 2\u00ba \u2013 Esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o, produzindo efeitos nas datas espec\u00edficas, ficando revogadas as disposi\u00e7\u00f5es em contr\u00e1rio."+ ass;
   }
   if (t === "exo") {
     var linhas2 = Array.from(document.querySelectorAll("#srvs .srv")).map(function(r, i) {
-      var nm = r.querySelector(".sN").value.trim();
-      var fn = r.querySelector(".sF").value.trim();
-      var sec = r.querySelector(".sS").value.trim();
-      var ped = r.querySelector(".sP");
-      var pedStr = ped && ped.value === "sim" ? ", a pedido," : "";
+      var nm=r.querySelector(".sN").value.trim(), fn=r.querySelector(".sF").value.trim(), sec=r.querySelector(".sS").value.trim();
+      var ped=r.querySelector(".sP"), pedStr=ped&&ped.value==="sim"?", a pedido,":"";
       var ef = r.querySelector(".sE").value ? datePT(r.querySelector(".sE").value) : "";
-      var g = nm.slice(-1) === "A" ? "a" : "o";
-      return T.ROMS[i] + " \u2013 " + nm + pedStr + ", do cargo de " + fn + ", lotad" + g + " na " + sec + ", com efeitos a partir de " + ef + ";";
-    }).join("
-
-");
-    return "PORTARIA N\u00ba. " + num + "
-DE " + dt.toUpperCase() + ".
-
-"" + em + ""
-
-" + conds + T.prefeito + "
-
-DETERMINA:
-
-Art. 1\u00ba \u2013 Ficam exonerados os seguintes servidores:
-
-" + linhas2 + "
-
-Art. 2\u00ba \u2013 Esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o, revogadas as disposi\u00e7\u00f5es em contr\u00e1rio." + T.assina;
+      var g = nm.slice(-1)==="A" ? "a" : "o";
+      return ROMS[i]+" \u2013 "+nm+pedStr+", do cargo de "+fn+", lotad"+g+" na "+sec+", com efeitos a partir de "+ef+";";
+    }).join("\n\n");
+    return "PORTARIA N\u00ba. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+conds+pref+"\n\nDETERMINA:\n\nArt. 1\u00ba \u2013 Ficam exonerados os seguintes servidores:\n\n"+linhas2+"\n\nArt. 2\u00ba \u2013 Esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o, revogadas as disposi\u00e7\u00f5es em contr\u00e1rio."+ ass;
   }
   if (t === "pae") {
-    var bo = gv("_fbo"), sec = gv("_fsec"), fato = gv("_ffato");
-    var boLine = bo ? "
-
-CONSIDERANDO o Boletim de Ocorr\u00eancia n\u00ba " + bo + ";" : "";
-    var extra = co ? "
-
-" + conds : "";
-    return "PORTARIA N\u00ba. " + num + "
-DE " + dt.toUpperCase() + ".
-
-"" + em + ""
-
-CONSIDERANDO o relato circunstanciado da ocorr\u00eancia envolvendo servidor municipal, lotado na " + sec + ";" + boLine + "
-
-CONSIDERANDO que os fatos demandam apura\u00e7\u00e3o quanto \u00e0s circunst\u00e2ncias e \u00e0 eventual responsabilidade dos envolvidos;
-
-CONSIDERANDO a necessidade de assegurar o devido processo legal, a ampla defesa e o contradit\u00f3rio;" + extra + T.prefeito + "
-
-DETERMINA:
-
-Art. 1\u00ba \u2013 Fica instaurado Processo Administrativo Especial \u2013 PAE, com a finalidade de apurar os fatos e responsabilidades decorrentes de " + fato + "
-
-\u00a7 1\u00ba \u2013 A condu\u00e7\u00e3o do PAE ficar\u00e1 a cargo da Procuradoria Geral do Munic\u00edpio, nos termos da Lei Complementar Municipal n\u00ba 126/2017.
-
-\u00a7 2\u00ba \u2013 Na condu\u00e7\u00e3o do processo, dever\u00e3o ser observados os preceitos do contradit\u00f3rio e da ampla defesa.
-
-Art. 2\u00ba \u2013 Revogadas as disposi\u00e7\u00f5es em contr\u00e1rio, esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o.
-
-Fabr\u00edcio Sanchez Bergamin
-Prefeito Municipal";
+    var bo=gv("_fbo"),sec=gv("_fsec"),fato=gv("_ffato");
+    var boLine = bo ? "\n\nCONSIDERANDO o Boletim de Ocorr\u00eancia n\u00ba "+bo+";" : "";
+    return "PORTARIA N\u00ba. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+"CONSIDERANDO o relato circunstanciado da ocorr\u00eancia envolvendo servidor municipal, lotado na "+sec+";"+boLine+"\n\nCONSIDERANDO que os fatos demandam apura\u00e7\u00e3o quanto \u00e0s circunst\u00e2ncias e \u00e0 eventual responsabilidade dos envolvidos;\n\nCONSIDERANDO a necessidade de assegurar o devido processo legal, a ampla defesa e o contradit\u00f3rio;"+pref+"\n\nDETERMINA:\n\nArt. 1\u00ba \u2013 Fica instaurado Processo Administrativo Especial \u2013 PAE, com a finalidade de apurar os fatos e responsabilidades decorrentes de "+fato+"\n\n\u00a7 1\u00ba \u2013 A condu\u00e7\u00e3o do PAE ficar\u00e1 a cargo da Procuradoria Geral do Munic\u00edpio, nos termos da Lei Complementar Municipal n\u00ba 126/2017.\n\n\u00a7 2\u00ba \u2013 Na condu\u00e7\u00e3o do processo, dever\u00e3o ser observados os preceitos do contradit\u00f3rio e da ampla defesa.\n\nArt. 2\u00ba \u2013 Revogadas as disposi\u00e7\u00f5es em contr\u00e1rio, esta Portaria entra em vigor na data de sua publica\u00e7\u00e3o.\n\nFabr\u00edcio Sanchez Bergamin\nPrefeito Municipal";
   }
   if (t === "dec") {
-    var arts = gv("_farts") || "Art. 1\u00ba \u2013 ...
-
-Art. 2\u00ba \u2013 Este Decreto entra em vigor na data de sua publica\u00e7\u00e3o.";
-    return "DECRETO N\u00ba. " + num + "
-DE " + dt.toUpperCase() + ".
-
-"" + em + ""
-
-" + conds + T.prefeito + "
-
-DECRETA:
-
-" + arts + T.assina;
+    var arts = gv("_farts") || "Art. 1\u00ba \u2013 ...\n\nArt. 2\u00ba \u2013 Este Decreto entra em vigor na data de sua publica\u00e7\u00e3o.";
+    return "DECRETO N\u00ba. "+num+"\nDE "+dt.toUpperCase()+".\n\n\""+em+"\"\n\n"+conds+pref+"\n\nDECRETA:\n\n"+arts+ass;
   }
   if (t === "pro") {
-    var proc = gv("_fproc"), parte = gv("_fparte"), vara = gv("_fvara");
-    var advs = gv("_fadvs").split("
-").filter(function(l) { return l.trim(); }).join("; ");
-    return "PROCURA\u00c7\u00c3O "AD JUDICIA"
-
-MUNIC\u00cdPIO DE EXTREMA, pessoa jur\u00eddica de direito p\u00fablico interno, inscrita no CNPJ n.\u00ba 18.677.591/0001-00, representado pelo Prefeito Municipal, Fabr\u00edcio Sanchez Bergamin, CPF n\u00b0. 311.850.858-23, nomeia e constitui como procuradores os advogados: " + advs + ".
-
-A quem confere amplos poderes para o foro em geral, com a cl\u00e1usula "ad judicia", em qualquer ju\u00edzo, inst\u00e2ncia ou Tribunal, podendo propor as a\u00e7\u00f5es competentes e defend\u00ea-lo nas contr\u00e1rias, at\u00e9 final decis\u00e3o, podendo ainda substabelecer.
-
-Especialmente para atuar nos autos do processo n\u00ba " + proc + " que lhe move " + parte + ", perante " + vara + ".
-
-Extrema, " + datePT(gv("_fd")) + ".
-
-Fabr\u00edcio Sanchez Bergamin
-Prefeito Municipal";
+    var proc=gv("_fproc"),parte=gv("_fparte"),vara=gv("_fvara");
+    var advs=gv("_fadvs").split("\n").filter(function(l){return l.trim();}).join("; ");
+    return "PROCURA\u00c7\u00c3O \"AD JUDICIA\"\n\nMUNIC\u00cdPIO DE EXTREMA, pessoa jur\u00eddica de direito p\u00fablico interno, inscrita no CNPJ n.\u00ba 18.677.591/0001-00, representado pelo Prefeito Municipal, Fabr\u00edcio Sanchez Bergamin, CPF n\u00b0. 311.850.858-23, nomeia e constitui como procuradores os advogados: "+advs+".\n\nA quem confere amplos poderes para o foro em geral, com a cl\u00e1usula \"ad judicia\", em qualquer ju\u00edzo, inst\u00e2ncia ou Tribunal, podendo propor as a\u00e7\u00f5es competentes e defend\u00ea-lo nas contr\u00e1rias, at\u00e9 final decis\u00e3o, podendo ainda substabelecer.\n\nEspecialmente para atuar nos autos do processo n\u00ba "+proc+" que lhe move "+parte+", perante "+vara+".\n\nExtrema, "+datePT(gv("_fd"))+".\n\nFabr\u00edcio Sanchez Bergamin\nPrefeito Municipal";
   }
   if (t === "ofi") {
-    return "OF\u00cdCIO N\u00ba " + gv("_fn") + "
-
-Extrema, " + dt + ".
-
-" + gv("_fdest") + "
-
-Assunto: " + gv("_fassunto") + "
-
-Senhor(a),
-
-" + gv("_fcorpo") + "
-
-Atenciosamente,
-
-Bruno Bertolotti
-Procurador-Geral do Munic\u00edpio de Extrema \u2013 MG
-OAB/MG 206.199";
+    return "OF\u00cdCIO N\u00ba "+gv("_fn")+"\n\nExtrema, "+dt+".\n\n"+gv("_fdest")+"\n\nAssunto: "+gv("_fassunto")+"\n\nSenhor(a),\n\n"+gv("_fcorpo")+"\n\nAtenciosamente,\n\nBruno Bertolotti\nProcurador-Geral do Munic\u00edpio de Extrema \u2013 MG\nOAB/MG 206.199";
   }
   return "";
 }
 
 function doPrev() {
-  var txt = aiTxt || buildText();
-  prevTxt = txt;
+  var txt = aiTxt || buildText(); prevTxt = txt;
   var box = document.getElementById("pbox");
-  box.innerHTML = "<div style="text-align:center;font-weight:700;color:#c9a84c;margin-bottom:12px">PREFEITURA MUNICIPAL DE EXTREMA \u2014 MG</div>" +
-    txt.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/
-/g, "<br>");
+  box.innerHTML = "<div style=\"text-align:center;font-weight:700;color:#c9a84c;margin-bottom:12px\">PREFEITURA MUNICIPAL DE EXTREMA</div>" + txt.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
   box.style.display = "block";
   document.getElementById("dlbtn").disabled = false;
   ntf("Preview gerado!");
@@ -535,80 +270,56 @@ async function doAI() {
   ntf("Consultando IA...");
   try {
     var r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 2000,
-        system: "Voc\u00ea \u00e9 um assistente jur\u00eddico da Prefeitura de Extrema - MG. Retorne SOMENTE o documento completo revisado, sem explica\u00e7\u00f5es ou markdown.",
-        messages: [{role: "user", content: "Documento:
-
-" + base + "
-
-Ajuste: " + prompt}]
-      })
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,
+        system:"Voc\u00ea \u00e9 um assistente jur\u00eddico da Prefeitura de Extrema - MG. Retorne SOMENTE o documento completo revisado, sem explica\u00e7\u00f5es ou markdown.",
+        messages:[{role:"user",content:"Documento:\n\n"+base+"\n\nAjuste: "+prompt}]})
     });
     var d = await r.json();
     var res = d.content && d.content[0] && d.content[0].text;
     if (!res) throw new Error("Sem resposta");
     aiTxt = res; prevTxt = res;
-    var el = document.getElementById("ai-res");
-    el.textContent = res; el.style.display = "block";
-    doPrev();
-    ntf("Revis\u00e3o aplicada!");
-  } catch(e) { ntf("Erro IA: " + e.message); }
+    var el = document.getElementById("ai-res"); el.textContent = res; el.style.display = "block";
+    doPrev(); ntf("Revis\u00e3o aplicada!");
+  } catch(ex) { ntf("Erro IA: " + ex.message); }
 }
 
 async function doDL() {
   if (!prevTxt) { ntf("Gere o preview primeiro."); return; }
   if (typeof docx === "undefined") { ntf("Biblioteca docx ainda carregando, aguarde..."); return; }
   var D = docx, AT = D.AlignmentType;
-  var lines = prevTxt.split("
-"), children = [];
+  var lines = prevTxt.split("\n"), children = [];
   function par(text, opts) {
     opts = opts || {};
-    return new D.Paragraph({
-      alignment: opts.al || AT.JUSTIFIED,
-      spacing: {after: opts.after || 130},
-      indent: opts.fi ? {firstLine: opts.fi} : opts.li ? {left: opts.li} : {},
-      children: [new D.TextRun({text: text, font: "Arial", size: 22, bold: !!opts.bold, italics: !!opts.it})]
-    });
+    return new D.Paragraph({alignment:opts.al||AT.JUSTIFIED, spacing:{after:opts.after||130},
+      indent:opts.fi?{firstLine:opts.fi}:opts.li?{left:opts.li}:{},
+      children:[new D.TextRun({text:text,font:"Arial",size:22,bold:!!opts.bold,italics:!!opts.it})]});
   }
   for (var i = 0; i < lines.length; i++) {
     var l = lines[i].trim();
-    if (!l) { children.push(new D.Paragraph({children: [new D.TextRun("")], spacing: {after: 0}})); continue; }
-    if (i < 3 && /^(PORTARIA|DECRETO|PROCURA|OF.CIO)/i.test(l)) { children.push(par(l, {al: AT.CENTER, bold: true, after: 80})); continue; }
-    if (i < 5 && /^DE d/.test(l)) { children.push(par(l, {al: AT.CENTER, bold: true, after: 160})); continue; }
-    if (l.charAt(0) === """ && l.charAt(l.length-1) === """) { children.push(par(l, {bold: true, it: true, fi: 2880, after: 200})); continue; }
-    if (/^CONSIDERANDO/.test(l)) {
-      children.push(new D.Paragraph({alignment: AT.JUSTIFIED, spacing: {after: 160}, indent: {firstLine: 720},
-        children: [new D.TextRun({text: "CONSIDERANDO", bold: true, font: "Arial", size: 22}),
-                   new D.TextRun({text: l.replace("CONSIDERANDO", ""), font: "Arial", size: 22})]}));
-      continue;
-    }
-    if (/^(O PREFEITO|DETERMINA:|DECRETA:)/.test(l)) { children.push(par(l, {al: AT.CENTER, bold: true, after: 160})); continue; }
-    if (/^Art./.test(l) || l.charAt(0) === "\u00a7") { children.push(par(l, {fi: 720, after: 120})); continue; }
-    if (/^(I|II|III|IV|V|VI|VII|VIII|IX|X) /.test(l)) { children.push(par(l, {fi: 1440, after: 120})); continue; }
-    if (/^(Fabr|Bruno|Prefeito|- Pref)/.test(l)) { children.push(par(l, {al: AT.CENTER, bold: /^(Fabr|Bruno)/.test(l), after: 40})); continue; }
-    children.push(par(l, {fi: 720, after: 130}));
+    if (!l) { children.push(new D.Paragraph({children:[new D.TextRun("")],spacing:{after:0}})); continue; }
+    if (i<3 && /^(PORTARIA|DECRETO|PROCURA|OF.CIO)/i.test(l)) { children.push(par(l,{al:AT.CENTER,bold:true,after:80})); continue; }
+    if (i<5 && /^DE \d/.test(l)) { children.push(par(l,{al:AT.CENTER,bold:true,after:160})); continue; }
+    if (l.charAt(0)==="\"" && l.charAt(l.length-1)==="\"") { children.push(par(l,{bold:true,it:true,fi:2880,after:200})); continue; }
+    if (/^CONSIDERANDO/.test(l)) { children.push(new D.Paragraph({alignment:AT.JUSTIFIED,spacing:{after:160},indent:{firstLine:720},children:[new D.TextRun({text:"CONSIDERANDO",bold:true,font:"Arial",size:22}),new D.TextRun({text:l.replace("CONSIDERANDO",""),font:"Arial",size:22})]})); continue; }
+    if (/^(O PREFEITO|DETERMINA:|DECRETA:)/.test(l)) { children.push(par(l,{al:AT.CENTER,bold:true,after:160})); continue; }
+    if (/^Art\./.test(l) || /^\u00a7/.test(l)) { children.push(par(l,{fi:720,after:120})); continue; }
+    if (/^(I|II|III|IV|V|VI|VII|VIII|IX|X) /.test(l)) { children.push(par(l,{fi:1440,after:120})); continue; }
+    if (/^(Fabr|Bruno|Prefeito|- Pref)/.test(l)) { children.push(par(l,{al:AT.CENTER,bold:/^(Fabr|Bruno)/.test(l),after:40})); continue; }
+    children.push(par(l,{fi:720,after:130}));
   }
-  var doc2 = new D.Document({
-    styles: {default: {document: {run: {font: "Arial", size: 22}}}},
-    sections: [{
-      properties: {page: {size: {width: 11906, height: 16838}, margin: {top: 1440, right: 1440, bottom: 1440, left: 1701}}},
-      children: children
-    }]
-  });
+  var doc2 = new D.Document({styles:{default:{document:{run:{font:"Arial",size:22}}}},
+    sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1440,right:1440,bottom:1440,left:1701}}},children:children}]});
   var buf = await D.Packer.toBuffer(doc2);
-  var blob = new Blob([buf], {type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+  var blob = new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
   var url = URL.createObjectURL(blob);
-  var a = document.createElement("a");
-  a.href = url; a.download = "PGM_" + curDoc + "_Extrema.docx"; a.click();
+  var a = document.createElement("a"); a.href=url; a.download="PGM_"+curDoc+"_Extrema.docx"; a.click();
   URL.revokeObjectURL(url);
   ntf("Download iniciado!");
 }
 
 sel("nom");
+
 </script>
 </body>
 </html>
