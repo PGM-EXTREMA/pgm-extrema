@@ -356,6 +356,7 @@ async function sD(id){const o={titulo:document.getElementById("_dt").value.trim(
 async function cD(id){await SB.from("demandas").update({status:"concluida",concluida_em:new Date().toISOString()}).eq("id",id);ntf("Concluida!");await rl()}
 async function xD(id){if(!confirm("Excluir?"))return;await SB.from("demandas").delete().eq("id",id);ntf("Excluido");await rl()}
 
+function switchDemTab(tab){window._demTab=tab;var el=document.getElementById('ct');if(el)rMD(el);}
 async function rMD(el){
   const uid=S.d&&S.d.id;
   const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
@@ -363,7 +364,7 @@ async function rMD(el){
   const _dt=window._demTab||"ativas";const _base=isPGM?D.d:D.d.filter(x=>x.assessor_id===uid);const minhas=_dt==="concluidas"?_base.filter(x=>x.status==="concluida"):_base.filter(x=>x.status!=="concluida");
   const titulo=isPGM?"Todas as Demandas":"Minhas Demandas";
   const subtitulo=isPGM?"Visao geral de todas as demandas":"Demandas atribuidas a voce";
-  const _tabsHtml='<div style="display:flex;gap:8px;margin-bottom:16px">'+[["ativas","&#9654; Ativas"],["concluidas","&#10003; Concluídas"]].map(function(t){const _on=(_dt||"ativas")===t[0];return'<button onclick="window._demTab="'+t[0]+'";rMD(document.getElementById(\'ct\'))" style="padding:7px 20px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;'+(_on?"background:#c9a84c;color:#0d1b2a":"background:rgba(255,255,255,.06);color:var(--gray)")+'">'+ t[1]+'</button>';}).join("")+'</div>';
+  const _tabsHtml='<div style="display:flex;gap:8px;margin-bottom:16px">'+[['ativas','&#9654; Ativas'],['concluidas','&#10003; Conclu\u00eddas']].map(function(t){var _on=(_dt||'ativas')===t[0];return '<button onclick="switchDemTab(\''+t[0]+'\')" style="padding:7px 20px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;'+(_on?'background:#c9a84c;color:#0d1b2a':'background:rgba(255,255,255,.06);color:var(--gray)')+'">'+ t[1]+'</button>';}).join('')+'</div>';
   if(minhas.length===0){
     el.innerHTML="<div class=\"tb\"><div><h2>"+titulo+"</h2><p>"+subtitulo+"</p></div></div><div class=\"pb\" style=\"padding:16px\">"+_tabsHtml+"<p style=\"text-align:center;padding:40px;color:var(--gray)\">Nenhuma demanda nesta aba.</p></div>";
     return;
