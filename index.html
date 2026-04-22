@@ -360,7 +360,7 @@ async function rMD(el){
   const uid=S.d&&S.d.id;
   const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
   // For procurador, show all demandas. For assessor, show only assigned ones
-  const _dt=window._demTab||"ativas";const _base=isPGM?D.d:D.d.filter(x=>x.assessor_id===uid);const minhas=_dt==="concluidas"?_base.filter(x=>x.status==="concluida"):_base.filter(x=>x.status!=="concluida");
+  const _dt=window._demTab||"ativas";const _base=isPGM?D.d:D.d.filter(x=>x.assessor_id===uid);const minhas=_dt==="concluidas"?_base.filter(x=>x.status==="concluida"):_base.filter(x=>x.status!=="concluida");const _tabsHtml='<div style="display:flex;gap:8px;margin-bottom:16px">'+[["ativas","&#9654; Ativas"],["concluidas","&#10003; Concluídas"]].map(function(t){const _on=_dt===t[0];return'<button onclick="window._demTab="'+t[0]+'";rMD(document.getElementById(\'ct\'))" style="padding:7px 20px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;'+(_on?"background:#c9a84c;color:#0d1b2a":"background:rgba(255,255,255,.06);color:var(--gray)")+'">'+ t[1]+'</button>';}).join("")+'</div>';
   const titulo=isPGM?"Todas as Demandas":"Minhas Demandas";
   const subtitulo=isPGM?"Visao geral de todas as demandas":"Demandas atribuidas a voce";
   if(minhas.length===0){
