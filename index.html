@@ -357,6 +357,7 @@ async function cD(id){await SB.from("demandas").update({status:"concluida",concl
 async function xD(id){if(!confirm("Excluir?"))return;await SB.from("demandas").delete().eq("id",id);ntf("Excluido");await rl()}
 
 function switchDemTab(tab){window._demTab=tab;var el=document.getElementById('ct');if(el)rMD(el);}
+function switchDemTab(tab){window._demTab=tab;var c=document.getElementById('ct');if(c)rMD(c);}
 async function rMD(el){
   const uid=S.d&&S.d.id;
   const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
