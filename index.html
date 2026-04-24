@@ -295,7 +295,7 @@ function rD(el){
   }).join("");
 
   // ── protocolos recentes ──
-  const ph=D.p.length===0?"<p style=\"text-align:center;padding:24px;color:var(--gray)\">Nenhum protocolo</p>":D.p.slice(0,5).map(p=>{const cx={recebido:"#c9a84c",em_analise:"#4a90d9",respondido:"#4caf82",arquivado:"#8a9bb0",em_andamento:"#e09440"}[p.status]||"#c9a84c";return"<div style=\"display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid rgba(255,255,255,.04)\"><div style=\"width:7px;height:7px;border-radius:50%;background:"+cx+";flex-shrink:0\"></div><div><div style=\"font-size:12px;font-weight:500\">"+(p.titulo||"").slice(0,45)+"</div><div style=\"font-size:10px;color:var(--gray)\">"+(p.secretaria&&p.secretaria.sigla||"")+" &bull; "+fD(p.data_entrada)+"</div></div></div>";}).join("");
+  const ph=D.p.length===0?"<p style=\"text-align:center;padding:24px;color:var(--gray)\">Nenhum protocolo</p>":D.p.slice(0,5).map(p=>{const cx={recebido:"#c9a84c",em_analise:"#4a90d9",respondido:"#4caf82",arquivado:"#8a9bb0",em_andamento:"#e09440"}[p.status]||"#c9a84c";return"<div style=\"display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid rgba(255,255,255,.04)\"><div style=\"width:7px;height:7px;border-radius:50%;background:"+cx+";flex-shrink:0\"></div><div><div style=\"font-size:12px;font-weight:500\">"+(p.titulo||"").slice(0,45)+"</div><div style=\"font-size:10px;color:var(--gray)\">"+(p.secretaria&&p.secretaria.sigla||"")+" &bull; "+fd(p.data_entrada)+"</div></div></div>";}).join("");
 
   el.innerHTML=
     "<div class=\"tb\"><div><h2>Painel de Controle</h2><p>"+new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})+"</p></div>"+
@@ -444,7 +444,7 @@ function gerarRelGeral(){
     D.d.filter(x=>x.status!=="concluida").map(function(d,i){
       const ass=D.u.find(u=>u.id===d.assessor_id);
       const r=dl(d.prazo);
-      const prazoStr=d.prazo?fD(d.prazo)+(r!==null&&r<0?" <span style='color:#c0392b'>(ATRASADA)</span>":r!==null&&r<=7?" <span style='color:#e67e22'>("+r+"d)</span>":""):"—";
+      const prazoStr=d.prazo?fd(d.prazo)+(r!==null&&r<0?" <span style='color:#c0392b'>(ATRASADA)</span>":r!==null&&r<=7?" <span style='color:#e67e22'>("+r+"d)</span>":""):"—";
       return"<tr><td style='padding:5px 10px;border-bottom:1px solid #eee'>"+(i+1)+"</td><td style='padding:5px 10px;border-bottom:1px solid #eee'>"+(d.titulo||"").slice(0,60)+"</td><td style='padding:5px 10px;border-bottom:1px solid #eee'>"+(ass?ass.nome:"—")+"</td><td style='padding:5px 10px;border-bottom:1px solid #eee'>"+prazoStr+"</td><td style='padding:5px 10px;border-bottom:1px solid #eee'>"+(d.status||"")+"</td></tr>";
     }).join("")+
     "</tbody></table>"+
@@ -460,7 +460,7 @@ function gerarRelAssessor(assessorId, assessorNome){
   const w=window.open("","_blank","width=900,height=700");
   const makeRows=function(arr){return arr.map(function(d,i){
     const r=dl(d.prazo);
-    const prazoStr=d.prazo?fD(d.prazo)+(r!==null&&r<0?" <b style='color:#c0392b'>(ATRASADA)</b>":r!==null&&r<=7?" <b style='color:#e67e22'>("+r+"d)</b>":""):"—";
+    const prazoStr=d.prazo?fd(d.prazo)+(r!==null&&r<0?" <b style='color:#c0392b'>(ATRASADA)</b>":r!==null&&r<=7?" <b style='color:#e67e22'>("+r+"d)</b>":""):"—";
     const obsStr=d.consideracoes_assessor?"<br><span style='font-size:10px;color:#555;font-style:italic'>Obs: "+d.consideracoes_assessor+"</span>":"";
     return"<tr><td style='padding:6px 10px;border-bottom:1px solid #eee'>"+(i+1)+"</td><td style='padding:6px 10px;border-bottom:1px solid #eee'>"+(d.titulo||"").slice(0,70)+obsStr+"</td><td style='padding:6px 10px;border-bottom:1px solid #eee'>"+prazoStr+"</td><td style='padding:6px 10px;border-bottom:1px solid #eee'>"+(d.status||"")+"</td></tr>";
   }).join("");};
