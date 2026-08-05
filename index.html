@@ -648,8 +648,6 @@ function calcPrazoSancao(dataRetorno){
   return current;
 }
 function rPrjExtra(el){
-  // Override: render projetos_lei with extra sanção logic
-  var cfg=TB.prj;
   var rows=D.pl||[];
   if(!rows.length){
     el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2></div><button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oTf(\'prj\')">+ Novo</button></div>'+
@@ -662,56 +660,63 @@ function rPrjExtra(el){
     var diasRestantes=prazoSancao?Math.ceil((prazoSancao-hoje)/(1000*60*60*24)):null;
     var alertaSancao='';
     if(prazoSancao&&row.status==='aprovado'){
-      if(diasRestantes<0){
-        alertaSancao='<span style="background:#e05c5c;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">PRAZO VENCIDO</span>';
-      } else if(diasRestantes<=3){
-        alertaSancao='<span style="background:#e09440;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
-      } else {
-        alertaSancao='<span style="background:rgba(76,175,130,.2);color:#4caf82;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
-      }
+      if(diasRestantes<0)alertaSancao='<span style="background:#e05c5c;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">PRAZO VENCIDO</span>';
+      else if(diasRestantes<=3)alertaSancao='<span style="background:#e09440;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
+      else alertaSancao='<span style="background:rgba(76,175,130,.2);color:#4caf82;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
     }
     var stCor={em_elaboracao:'#8a9bb0',enviado_camara:'#c9a84c',aprovado:'#4a90d9',sancionado:'#4caf82',vetado:'#e05c5c',arquivado:'#555'}[row.status]||'#8a9bb0';
-    var cells=cfg.cols.map(function(c){
-      var v=row[c.k]||'';
-      if(c.dt&&v)v=fd(v);
-      return '<td style="padding:10px 14px;font-size:13px">'+v+'</td>';
-    }).join('');
+    var btnLei=(row.status==='sancionado'||row.numero_lei)
+      ?'<button class="bsm" style="background:rgba(76,175,130,.12);color:#4caf82;border:1px solid rgba(76,175,130,.3)" onclick="oUploadPrj(\''+row.id+'\',\'lei\')">&#128212; Lei</button>'
+      :'';
+    var colLei=row.numero_lei
+      ?'<div style="font-weight:700;color:#4caf82;font-size:12px">'+row.numero_lei+'</div>'+(row.url_lei?'<a href="'+row.url_lei+'" target="_blank" style="font-size:10px;color:#4a90d9">Abrir</a>':'')
+      :'<span style="color:var(--gray);font-size:12px">—</span>';
+    var colProjeto=row.url_projeto
+      ?'<a href="'+row.url_projeto+'" target="_blank" style="font-size:11px;color:#c9a84c">&#128229; Ver Projeto</a>'
+      :'';
+    var colRetorno=row.data_retorno
+      ?fd(row.data_retorno)+(prazoSancao?'<br><span style="font-size:10px;color:'+(diasRestantes<0?'#e05c5c':diasRestantes<=3?'#e09440':'#4caf82')+'">Sancionar até '+prazoSancao.toLocaleDateString('pt-BR')+'</span>':'')
+      :'<span style="color:var(--gray)">—</span>';
     return '<tr style="border-bottom:1px solid rgba(255,255,255,.04)">'+
       '<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:6px">'+
         '<div style="width:6px;height:6px;border-radius:50%;background:'+stCor+';flex-shrink:0"></div>'+
-        '<span style="font-size:13px;font-weight:600">'+(row.numero_pgm||'—')+'</span>'+
-        (row.numero_camara?'<span style="font-size:11px;color:var(--gray)">/ C\u00e2mara: '+row.numero_camara+'</span>':'')+
+        '<span style="font-size:13px;font-weight:600">'+(row.numero_pgm||row.numero||'—')+'</span>'+
+        (row.numero_camara?'<span style="font-size:10px;color:var(--gray)">C: '+row.numero_camara+'</span>':'')+
         alertaSancao+
       '</div></td>'+
-      '<td style="padding:10px 14px;font-size:12px;max-width:300px">'+(row.ementa||'').slice(0,80)+(row.ementa&&row.ementa.length>80?'...':'')+'</td>'+
-      '<td style="padding:10px 14px"><span style="font-size:11px;background:rgba(255,255,255,.06);padding:2px 8px;border-radius:10px;color:'+stCor+'">'+(row.status||'').replace('_',' ')+'</span></td>'+
+      '<td style="padding:10px 14px;font-size:12px;max-width:260px">'+(row.ementa||'').slice(0,80)+(row.ementa&&row.ementa.length>80?'...':'')+'</td>'+
+      '<td style="padding:10px 14px"><span style="font-size:11px;background:rgba(255,255,255,.06);padding:2px 8px;border-radius:10px;color:'+stCor+'">'+(row.status||'').replace(/_/g,' ')+'</span></td>'+
       '<td style="padding:10px 14px;font-size:11px;color:var(--gray)">'+(row.data_envio_camara?fd(row.data_envio_camara):'—')+'</td>'+
-      '<td style="padding:10px 14px;font-size:11px;color:var(--gray)">'+(row.data_retorno?fd(row.data_retorno)+(prazoSancao?' → sancionar até <b style="color:'+( diasRestantes<0?'#e05c5c':diasRestantes<=3?'#e09440':'#4caf82')+'">'+prazoSancao.toLocaleDateString('pt-BR')+'</b>':''):'—')+'</td>'+
+      '<td style="padding:10px 14px;font-size:11px">'+colProjeto+'<br>'+colRetorno+'</td>'+
+      '<td style="padding:10px 14px;font-size:11px">'+colLei+'</td>'+
       '<td style="padding:10px 14px"><div style="display:flex;gap:4px;flex-wrap:wrap">'+
-        '<button class="bsm" style="background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)" data-v="prj" data-id="'+row.id+'" onclick="oTf(this.dataset.v,this.dataset.id)">Edit</button>'+
-        '<button class="bsm" style="background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.2)" data-tb="projetos_lei" data-dk="pl" data-id="'+row.id+'" onclick="xT(this.dataset.tb,this.dataset.dk,this.dataset.id)">Del</button>'+
-        '<button class="bsm" style="background:rgba(46,117,182,.12);color:#4a90d9;border:1px solid rgba(46,117,182,.3)" data-m="prj" data-id="'+row.id+'" onclick="oAnexos(this.dataset.m,this.dataset.id)">&#128206; Docs</button>'+'<button class="bsm" style="background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" data-id="'+row.id+'" onclick="oUploadPrj(\''+row.id+'\',\'projeto\')">&#128229; Projeto</button>'+(row.status==='sancionado'||row.numero_lei?'<button class="bsm" style="background:rgba(76,175,130,.12);color:#4caf82;border:1px solid rgba(76,175,130,.3)" data-id="'+row.id+'" onclick="oUploadPrj(\''+row.id+'\',\'lei\')">&#128212; Lei</button>':'')+
+        '<button class="bsm" style="background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)" onclick="oTf(\'prj\',\''+row.id+'\')">Edit</button>'+
+        '<button class="bsm" style="background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.2)" onclick="xT(\'projetos_lei\',\'pl\',\''+row.id+'\')">Del</button>'+
+        '<button class="bsm" style="background:rgba(46,117,182,.12);color:#4a90d9;border:1px solid rgba(46,117,182,.3)" onclick="oAnexos(\'prj\',\''+row.id+'\')">&#128206; Docs</button>'+
+        '<button class="bsm" style="background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oUploadPrj(\''+row.id+'\',\'projeto\')">&#128229; Projeto</button>'+
+        btnLei+
       '</div></td>'+
-      (row.obs_assessor?'<tr style="background:rgba(201,168,76,.04)"><td colspan="6" style="padding:4px 14px 8px"><span style="font-size:10px;color:#c9a84c;font-weight:700">Obs: </span><span style="font-size:11px;color:#ddd">'+row.obs_assessor+'</span></td></tr>':'')+
     '</tr>';
   }).join('');
 
-  el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2><p>'+rows.length+' projeto(s) cadastrado(s)</p></div>'+
+  el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2><p>'+rows.length+' projeto(s)</p></div>'+
     '<div style="display:flex;gap:8px;align-items:center">'+
-    '<input class="ii" id="_prj_busca" placeholder="&#128269; Buscar por tema ou ementa..." style="width:260px;font-size:12px" oninput="filtrarPrj(this.value)">'+
+    '<input class="ii" id="_prj_busca" placeholder="&#128269; Buscar por tema..." style="width:240px;font-size:12px" oninput="filtrarPrj(this.value)">'+
     '<button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oTf(\'prj\')">+ Novo</button></div></div>'+
     '<div class="pb"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse" id="_prj_tabela">'+
     '<thead><tr style="border-bottom:1px solid rgba(255,255,255,.08)">'+
-    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">N\u00ba</th>'+
-    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Ementa</th>'+
-    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Status</th>'+
-    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Envio C\u00e2mara</th>'+
-    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Retorno / Prazo San\u00e7\u00e3o</th>'+
-    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">A\u00e7\u00f5es</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">N\u00ba</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">Ementa</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">Status</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">Envio C\u00e2mara</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">Projeto / Retorno</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">Lei</th>'+
+    '<th style="padding:8px 14px;font-size:10px;text-transform:uppercase;color:var(--gray)">A\u00e7\u00f5es</th>'+
     '</tr></thead>'+
     '<tbody id="_prj_tbody">'+rows_html+'</tbody></table></div></div>';
   window._prjRows=rows;
 }
+
 function filtrarPrj(q){
   q=q.toLowerCase();
   var rows=window._prjRows||[];
