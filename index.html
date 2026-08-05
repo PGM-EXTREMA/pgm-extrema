@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOC<div class=\\"fi\\"><label>Prioridade</label><select id=\\"_dprior\\"><option value=\\"normal\\"" selected>Normal</option><option value=\\"alta\\">Alta</option><option value=\\"urgente\\">Urgente</option></select></div>TYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -244,7 +244,7 @@ if(!isPGM2){
   localStorage.setItem(lastKey,new Date().toISOString());
 }
 nv("dash")}
-function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0}]:[]),{id:"recibo",l:"Protocolo Fisico"},...(isPGM?[{id:"__gerador__",l:"Gerador de Docs"}]:[]),{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"}];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
+function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"busca",l:"&#128269; Busca"},{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0}]:[]),{id:"recibo",l:"Protocolo Fisico"},...(isPGM?[{id:"__gerador__",l:"Gerador de Docs"}]:[]),{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"}];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
 async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="__gerador__"){window.open("gerador.html","_blank");nv("dash");}else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
 async function rl(){await lA();bN();await nv(V)}
 const SM={recebido:["#c9a84c","Recebido"],em_analise:["#4a90d9","Em Analise"],em_andamento:["#e09440","Em Andamento"],respondido:["#4caf82","Respondido"],arquivado:["#8a9bb0","Arquivado"]};
@@ -317,7 +317,7 @@ function rD(el){
       "<div class=\"tw\" style=\"margin-top:18px\"><div style=\"padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06)\"><strong>Protocolos Recentes</strong></div>"+ph+"</div>"+
     "</div>";
 }
-function rP(el,f){const lista=f==="todos"?D.p:D.p.filter(x=>x.status===f);const cnt=s=>s==="todos"?D.p.length:D.p.filter(x=>x.status===s).length;const cards=lista.length===0?"<p style=\"text-align:center;padding:40px;color:var(--gray)\">Nenhum protocolo</p>":lista.map(function(p){const[c2,l2]=SM[p.status]||["#c9a84c","Recebido"];const btns=(p.status!=="respondido"&&p.status!=="arquivado")?"<div style=\"display:flex;flex-direction:column;gap:5px;flex-shrink:0\">"+(p.status==="recebido"?"<button class=\"bsm\" style=\"background:rgba(74,144,217,.15);color:#4a90d9;border:1px solid rgba(74,144,217,.3)\" data-id=\""+p.id+"\" onclick=\"sS(this.dataset.id,&quot;em_analise&quot;)\">Analisar</button>":"")+(p.status==="em_analise"?"<button class=\"bsm\" style=\"background:rgba(224,148,64,.15);color:#e09440;border:1px solid rgba(224,148,64,.3)\" data-id=\""+p.id+"\" onclick=\"sS(this.dataset.id,&quot;em_andamento&quot;)\">Andamento</button>":"")+"<button class=\"bsm\" style=\"background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)\" data-id=\""+p.id+"\" data-n=\""+p.numero+"\" data-t=\""+encodeURIComponent(p.titulo||"")+"\" onclick=\"oR(this.dataset.id,this.dataset.n,this.dataset.t)\">Responder</button><button class=\"bsm\" style=\"background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)\" data-id=\""+p.id+"\" onclick=\"sS(this.dataset.id,&quot;arquivado&quot;)\">Arquivar</button></div>":"";const resp=(p.status==="respondido"&&p.resposta)?"<div style=\"margin-top:10px;background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.2);border-radius:7px;padding:10px 12px\"><div style=\"font-size:10px;color:#4caf82;font-weight:600;margin-bottom:4px\">Resposta da Procuradoria</div><div>"+p.resposta+"</div></div>":"";return"<div class=\"pc\" style=\"border-left:4px solid "+c2+"\"><div style=\"display:flex;align-items:flex-start;gap:14px\"><div style=\"flex:1\"><div style=\"display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap\"><span style=\"font-family:monospace;font-size:11px;color:#c9a84c;font-weight:700\">#"+(p.numero||"?")+"</span><span class=\"bdg\" style=\"background:"+c2+"22;color:"+c2+"\">"+l2+"</span>"+(p.secretaria&&p.secretaria.sigla?"<span class=\"bdg\" style=\"background:rgba(255,255,255,.06);color:var(--gray)\">"+p.secretaria.sigla+"</span>":"")+"</div><div style=\"font-size:14px;font-weight:600;margin-bottom:4px\">"+(p.titulo||"")+"</div><div style=\"font-size:11px;color:var(--gray)\">"+(p.secretaria&&p.secretaria.nome||"")+fd(p.created_at)+"</div>"+(p.descricao?"<div style=\"font-size:12px;color:#ccc;margin-top:6px\">"+p.descricao+"</div>":"")+resp+"</div>"+btns+(p.status==="respondido"||p.status==="arquivado"?"<div style=\"display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)\"><button class=\"bsm\" style=\"background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)\" data-id=\""+p.id+"\" onclick=\"reabrirProt(this.dataset.id)\">Reabrir</button><button class=\"bsm\" style=\"background:rgba(74,144,217,.1);color:#4a90d9;border:1px solid rgba(74,144,217,.25)\" data-id=\""+p.id+"\" data-n=\""+p.numero+"\" onclick=\"addDocProt(this.dataset.id,this.dataset.n)\">+ Documento</button></div>":"")+"</div></div>"}).join("");el.innerHTML="<div class=\"tb\"><div><h2>Protocolos das Secretarias</h2></div></div><div class=\"pb\"><div class=\"tbb\">"+["todos","recebido","em_analise","em_andamento","respondido","arquivado"].map(s=>"<button class=\"tab"+(f===s?" a":"")+"\" data-f=\""+s+"\" onclick=\"rP(document.getElementById(&quot;ct&quot;),this.dataset.f)\">"+(s==="todos"?"Todos":SM[s]&&SM[s][1]||s)+"<span style=\"font-size:10px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:10px;margin-left:4px\">"+cnt(s)+"</span></button>").join("")+"</div><div style=\"display:flex;flex-direction:column;gap:10px\">"+cards+"</div></div>"}
+function rP(el,f){const lista=f==="todos"?D.p:D.p.filter(x=>x.status===f);const cnt=s=>s==="todos"?D.p.length:D.p.filter(x=>x.status===s).length;const cards=lista.length===0?"<p style=\"text-align:center;padding:40px;color:var(--gray)\">Nenhum protocolo</p>":lista.map(function(p){const[c2,l2]=SM[p.status]||["#c9a84c","Recebido"];const btns=(p.status!=="respondido"&&p.status!=="arquivado")?"<div style=\"display:flex;flex-direction:column;gap:5px;flex-shrink:0\">"+(p.status==="recebido"?"<button class=\"bsm\" style=\"background:rgba(74,144,217,.15);color:#4a90d9;border:1px solid rgba(74,144,217,.3)\" data-id=\""+p.id+"\" onclick=\"sS(this.dataset.id,&quot;em_analise&quot;)\">Analisar</button>":"")+(p.status==="em_analise"?"<button class=\"bsm\" style=\"background:rgba(224,148,64,.15);color:#e09440;border:1px solid rgba(224,148,64,.3)\" data-id=\""+p.id+"\" onclick=\"sS(this.dataset.id,&quot;em_andamento&quot;)\">Andamento</button>":"")+"<button class=\"bsm\" style=\"background:rgba(76,175,130,.15);color:#4caf82;border:1px solid rgba(76,175,130,.3)\" data-id=\""+p.id+"\" data-n=\""+p.numero+"\" data-t=\""+encodeURIComponent(p.titulo||"")+"\" onclick=\"oR(this.dataset.id,this.dataset.n,this.dataset.t)\">Responder</button><button class=\"bsm\" style=\"background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)\" data-id=\""+p.id+"\" onclick=\"sS(this.dataset.id,&quot;arquivado&quot;)\">Arquivar</button><button class=\"bsm\" style=\"background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)\" data-id=\""+p.id+"\" data-n=\""+p.numero+"\" onclick=\"verHistorico(this.dataset.id,this.dataset.n)\">&#128337; Hist.</button></div>":"";const resp=(p.status==="respondido"&&p.resposta)?"<div style=\"margin-top:10px;background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.2);border-radius:7px;padding:10px 12px\"><div style=\"font-size:10px;color:#4caf82;font-weight:600;margin-bottom:4px\">Resposta da Procuradoria</div><div>"+p.resposta+"</div></div>":"";return"<div class=\"pc\" style=\"border-left:4px solid "+c2+"\"><div style=\"display:flex;align-items:flex-start;gap:14px\"><div style=\"flex:1\"><div style=\"display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap\"><span style=\"font-family:monospace;font-size:11px;color:#c9a84c;font-weight:700\">#"+(p.numero||"?")+"</span><span class=\"bdg\" style=\"background:"+c2+"22;color:"+c2+"\">"+l2+"</span>"+(p.secretaria&&p.secretaria.sigla?"<span class=\"bdg\" style=\"background:rgba(255,255,255,.06);color:var(--gray)\">"+p.secretaria.sigla+"</span>":"")+"</div><div style=\"font-size:14px;font-weight:600;margin-bottom:4px\">"+(p.titulo||"")+"</div><div style=\"font-size:11px;color:var(--gray)\">"+(p.secretaria&&p.secretaria.nome||"")+fd(p.created_at)+"</div>"+(p.descricao?"<div style=\"font-size:12px;color:#ccc;margin-top:6px\">"+p.descricao+"</div>":"")+resp+"</div>"+btns+(p.status==="respondido"||p.status==="arquivado"?"<div style=\"display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)\"><button class=\"bsm\" style=\"background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)\" data-id=\""+p.id+"\" onclick=\"reabrirProt(this.dataset.id)\">Reabrir</button><button class=\"bsm\" style=\"background:rgba(74,144,217,.1);color:#4a90d9;border:1px solid rgba(74,144,217,.25)\" data-id=\""+p.id+"\" data-n=\""+p.numero+"\" onclick=\"addDocProt(this.dataset.id,this.dataset.n)\">+ Documento</button></div>":"")+"</div></div>"}).join("");el.innerHTML="<div class=\"tb\"><div><h2>Protocolos das Secretarias</h2></div></div><div class=\"pb\"><div class=\"tbb\">"+["todos","recebido","em_analise","em_andamento","respondido","arquivado"].map(s=>"<button class=\"tab"+(f===s?" a":"")+"\" data-f=\""+s+"\" onclick=\"rP(document.getElementById(&quot;ct&quot;),this.dataset.f)\">"+(s==="todos"?"Todos":SM[s]&&SM[s][1]||s)+"<span style=\"font-size:10px;background:rgba(255,255,255,.08);padding:1px 5px;border-radius:10px;margin-left:4px\">"+cnt(s)+"</span></button>").join("")+"</div><div style=\"display:flex;flex-direction:column;gap:10px\">"+cards+"</div></div>"}
 async function reabrirProt(id){if(!confirm("Reabrir este protocolo?"))return;SB.from("protocolos").update({status:"em_analise",atualizado_em:new Date().toISOString()}).eq("id",id).then(function(r){if(r.error){ntf("Erro ao reabrir.","#e05c5c");return;}ntf("Protocolo reaberto!");lA().then(function(){rP(document.getElementById("ct"),"todos");});});}
 function addDocProt(id,num){sM('<div class="md"><div class="mh"><h3>+ Documento &mdash; #'+num+'</h3><button class="mx" onclick="cM()">x</button></div>'+'<div class="mb">'+'<div style="margin-bottom:10px"><label style="font-size:11px;color:var(--gray)">Descrição do documento</label><input class="ii" id="_adp_desc" placeholder="Ex: Memorial descritivo, planilha atualizada..." style="margin-top:4px;width:100%"></div>'+'<div style="margin-bottom:12px"><label style="font-size:11px;color:var(--gray)">Arquivo(s)</label><input class="ii" type="file" id="_adp_file" multiple style="margin-top:4px;width:100%"></div>'+'<div style="display:flex;flex-direction:column;gap:8px;padding:10px 12px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid rgba(255,255,255,.08)">'+'<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px"><input type="checkbox" id="_adp_reabrir" style="width:16px;height:16px;cursor:pointer"> Reabrir protocolo para complementação (volta ao assessor)</label>'+'<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px"><input type="checkbox" id="_adp_recibo" checked style="width:16px;height:16px;cursor:pointer"> Gerar recibo de apresentação de documento</label>'+'</div>'+'</div>'+'<div class="mf"><button class="bn bs" onclick="cM()">Cancelar</button><button class="bn bp" data-id="'+id+'" data-num="'+num+'" onclick="salvarDocProt(this.dataset.id,this.dataset.num)">Salvar</button></div></div>');}
 async function salvarDocProt(id,num){var fi=document.getElementById("_adp_file");var desc=document.getElementById("_adp_desc").value.trim();var reabrir=document.getElementById("_adp_reabrir")&&document.getElementById("_adp_reabrir").checked;var gerarRecibo=document.getElementById("_adp_recibo")&&document.getElementById("_adp_recibo").checked;if(!fi||!fi.files.length){ntf("Selecione arquivo.");return;}ntf("Enviando...");var ok=0;var urls=[];var nomes=[];var files=Array.from(fi.files);for(var i=0;i<files.length;i++){var f=files[i];var path="protocolos/"+id+"/add_"+Date.now()+"_"+f.name.replace(/[^a-zA-Z0-9._-]/g,"_");var up=await SB.storage.from("documentos").upload(path,f,{upsert:true});if(!up.error){var pu=SB.storage.from("documentos").getPublicUrl(path);var url=pu.data.publicUrl;await SB.from("anexos").insert({nome:desc||f.name,url:url,tamanho:f.size,tipo:f.type,referencia_id:id,referencia_tipo:"protocolo_sec",criado_por:S.d&&S.d.nome});urls.push(url);nomes.push(f.name);ok++;}}if(ok>0){  if(reabrir){    await SB.from("protocolos").update({status:"em_analise",atualizado_em:new Date().toISOString()}).eq("id",id);    ntf("Documento(s) adicionado(s) e protocolo reaberto!");  } else {    ntf(ok+" doc(s) adicionado(s)!");  }  if(gerarRecibo){gerarReciboDoc(num||id,desc,nomes,urls);}  cM();await lA();rP(document.getElementById("ct"),"todos");} else ntf("Erro no upload.","#e05c5c");}
@@ -369,7 +369,7 @@ if(isPGM){
       return '<div class="pc" style="border-left:4px solid '+cor+';margin-bottom:12px">'+
         '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'+
         '<div style="flex:1">'+
-        '<div style="font-size:15px;font-weight:600;margin-bottom:4px">'+d2.titulo+"</div>"+
+        '<div style="font-size:15px;font-weight:600;margin-bottom:4px">'+(d2.prioridade==='urgente'?'<span style="background:#e05c5c;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase">URGENTE</span>':'')+(d2.prioridade==='alta'?'<span style="background:#e09440;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase">ALTA</span>':'')+d2.titulo+"</div>"+
         (d2.obs?'<div style="font-size:12px;color:var(--gray);margin-bottom:6px">'+d2.obs+"</div>":"")+
         '<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--gray)">'+
         (ass?"Assessor: "+ass.nome+" &nbsp;":"")+(d2.prazo?"Prazo: "+fd(d2.prazo):"")+
@@ -413,7 +413,7 @@ var cards2=lista2.length===0
     var btnA=sd!=="concluida"?'<div style="margin-top:12px"><label style="font-size:10px;color:var(--gray);font-weight:600;margin-bottom:5px;display:block">Enviar para assinatura</label><div style="display:flex;gap:8px"><input type="file" id="_paf_'+d2.id+'" multiple style="flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px;color:#f0ece3;font-size:11px;cursor:pointer"><button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" data-id="'+d2.id+'" onclick="envSign(this.dataset.id)">Enviar</button></div></div>':""
     var trfH=sd!=="concluida"?'<div style="margin-top:10px;padding:10px;background:rgba(255,255,255,.03);border-radius:7px;border:1px solid rgba(255,255,255,.07)"><div style="font-size:10px;color:var(--gray);font-weight:600;margin-bottom:6px">Transferir para outro assessor</div><div style="display:flex;gap:8px"><select id="_trf_'+d2.id+'" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:6px 10px;color:#f0ece3;font-size:12px;font-family:inherit"><option value="">Selecione...</option>'+D.u.filter(function(u){return u.role!=="procurador"&&u.id!==S.d.id;}).map(function(u){return'<option value="'+u.id+'">'+u.nome+"</option>";}).join("")+'</select><button class="bsm" style="background:rgba(138,155,176,.15);color:#8a9bb0;border:1px solid rgba(138,155,176,.3)" data-id="'+d2.id+'" onclick="trfDem(this.dataset.id)">Transferir</button></div></div>':""
     return '<div class="pc" style="border-left:4px solid '+cor+';margin-bottom:14px">'+
-      '<div style="font-size:15px;font-weight:600;margin-bottom:4px">'+d2.titulo+"</div>"+
+      '<div style="font-size:15px;font-weight:600;margin-bottom:4px">'+(d2.prioridade==='urgente'?'<span style="background:#e05c5c;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase">URGENTE</span>':'')+(d2.prioridade==='alta'?'<span style="background:#e09440;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase">ALTA</span>':'')+d2.titulo+"</div>"+
       (d2.obs?'<div style="font-size:12px;color:var(--gray);margin-bottom:6px">'+d2.obs+"</div>":"")+
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">'+
       '<span class="bdg" style="background:'+cor+'22;color:'+cor+'">'+lbl+"</span>"+
@@ -424,7 +424,7 @@ el.innerHTML='<div class="tb"><div><h2>Minhas Demandas</h2></div></div>'+
   '<div class="pb"><div class="tbb">'+stTabs2+"</div><div>"+cards2+"</div></div>";
 }
 function oDf(id){const d2=id?D.d.find(x=>x.id===id):{};if(!d2)return;sM("<div class=\"md\"><div class=\"mh\"><h3>"+(id?"Editar":"Nova Demanda")+"</h3><button class=\"mx\" onclick=\"cM()\">x</button></div><div class=\"mb\"><div class=\"fr\"><div class=\"fi ff\"><label>Titulo</label><input id=\"_dt\" value=\""+(d2.titulo||"")+"\"></div><div class=\"fi\"><label>Assessor</label><select id=\"_da\"><option value=\"\">-</option>"+D.u.map(u=>"<option value=\""+u.id+"\""+( d2.assessor_id===u.id?" selected":"")+">"+u.nome+"</option>").join("")+"</select></div><div class=\"fi\"><label>Prazo</label><input type=\"date\" id=\"_dp\" value=\""+(d2.prazo?d2.prazo.split("T")[0]:"")+"\"></div><div class=\"fi\"><label>Tipo</label><select id=\"_dtp\"><option value=\"\">-</option>"+["Parecer Juridico","Contrato","Licitacao","Judicial","Consultoria","Administrativo","Outro"].map(tp=>"<option"+(d2.tipo===tp?" selected":"")+">"+tp+"</option>").join("")+"</select></div><div class=\"fi\"><label>Prioridade</label><select id=\"_dpr\">"+["normal","alta","urgente"].map(p2=>"<option value=\""+p2+"\""+((d2.prioridade||"normal")===p2?" selected":"")+">"+p2+"</option>").join("")+"</select></div><div class=\"fi ff\"><label>Obs</label><textarea id=\"_do\" rows=\"3\">"+(d2.obs||"")+"</textarea></div>"+"<div class=\"fi ff\"><label>Anexos (opcional - selecione um ou mais)</label><input type=\"file\" id=\"_dfile\" multiple style=\"background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:8px;color:#f0ece3;font-size:12px;width:100%;cursor:pointer\"></div></div></div><div class=\"mf\"><button class=\"bn bs\" onclick=\"cM()\">Cancelar</button><button class=\"bn bp\" data-id=\""+(id||"")+"\" onclick=\"sD(this.dataset.id)\">Salvar</button></div></div>")}
-async function sD(id){const o={titulo:document.getElementById("_dt").value.trim(),assessor_id:document.getElementById("_da").value||null,prazo:document.getElementById("_dp").value||null,tipo:document.getElementById("_dtp").value||null,prioridade:document.getElementById("_dpr").value,obs:document.getElementById("_do").value||null};if(!o.titulo){ntf("Preencha o titulo.","#e05c5c");return}let demId=id;if(id){await SB.from("demandas").update(o).eq("id",id)}else{const{data:nd}=await SB.from("demandas").insert(Object.assign({},o,{status:"pendente"})).select().single();demId=nd&&nd.id}const fi=document.getElementById("_dfile");if(fi&&fi.files&&fi.files.length>0&&demId){const files=Array.from(fi.files);let ok=0;for(const f of files){const path="demandas/"+demId+"/"+Date.now()+"_"+f.name;const{error:ue}=await SB.storage.from("documentos").upload(path,f,{upsert:true});if(!ue){const{data:pu}=SB.storage.from("documentos").getPublicUrl(path);await SB.from("anexos").insert({nome:f.name,url:pu.publicUrl,tamanho:f.size,tipo:f.type,referencia_id:demId,referencia_tipo:"demanda",criado_por:S.d&&S.d.nome});ok++;}};ntf("Salvo! "+ok+" anexo(s) enviado(s).");}else{ntf("Salvo!")}cM();await rl()}
+async function sD(id){const o={titulo:document.getElementById("_dt").value.trim(),assessor_id:document.getElementById("_da").value||null,prazo:document.getElementById("_dp").value||null,prioridade:(document.getElementById("_dprior")&&document.getElementById("_dprior").value)||"normal",tipo:document.getElementById("_dtp").value||null,prioridade:document.getElementById("_dpr").value,obs:document.getElementById("_do").value||null};if(!o.titulo){ntf("Preencha o titulo.","#e05c5c");return}let demId=id;if(id){await SB.from("demandas").update(o).eq("id",id)}else{const{data:nd}=await SB.from("demandas").insert(Object.assign({},o,{status:"pendente"})).select().single();demId=nd&&nd.id}const fi=document.getElementById("_dfile");if(fi&&fi.files&&fi.files.length>0&&demId){const files=Array.from(fi.files);let ok=0;for(const f of files){const path="demandas/"+demId+"/"+Date.now()+"_"+f.name;const{error:ue}=await SB.storage.from("documentos").upload(path,f,{upsert:true});if(!ue){const{data:pu}=SB.storage.from("documentos").getPublicUrl(path);await SB.from("anexos").insert({nome:f.name,url:pu.publicUrl,tamanho:f.size,tipo:f.type,referencia_id:demId,referencia_tipo:"demanda",criado_por:S.d&&S.d.nome});ok++;}};ntf("Salvo! "+ok+" anexo(s) enviado(s).");}else{ntf("Salvo!")}cM();await rl()}
 async function cD(id){await SB.from("demandas").update({status:"concluida",concluida_em:new Date().toISOString()}).eq("id",id);ntf("Concluida!");await rl()}
 async function xD(id){if(!confirm("Excluir?"))return;await SB.from("demandas").delete().eq("id",id);ntf("Excluido");await rl()}
 
@@ -485,7 +485,221 @@ function gerarRelAssessor(assessorId, assessorNome){
     "</body></html>");
   w.document.close();
 }
+
+function rBusca(el){
+  el.innerHTML='<div class="tb"><div><h2>&#128269; Busca Global</h2><p>Pesquise em todos os módulos</p></div></div>'+
+    '<div class="pb"><div style="display:flex;gap:10px;margin-bottom:20px">'+
+    '<input class="ii" id="_bq" placeholder="Digite número, título, secretaria..." style="flex:1;font-size:14px" onkeydown="if(event.key===\'Enter\')executarBusca()">'+
+    '<button class="bn bp" onclick="executarBusca()" style="padding:10px 20px">Buscar</button></div>'+
+    '<div id="_bres"><p style="color:var(--gray);text-align:center;padding:30px">Digite para pesquisar em demandas, protocolos, processos, licitações, contratos, pareceres e ofícios.</p></div></div>';
+  setTimeout(()=>document.getElementById('_bq')&&document.getElementById('_bq').focus(),100);
+}
+async function executarBusca(){
+  var q=(document.getElementById('_bq')&&document.getElementById('_bq').value||'').trim().toLowerCase();
+  if(!q||q.length<2){ntf('Digite ao menos 2 caracteres.');return;}
+  var el=document.getElementById('_bres');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--gray)"><div class="sp" style="margin:0 auto 10px"></div>Buscando...</div>';
+  var results=[];
+  // Search demandas
+  D.d.forEach(function(d){
+    if((d.titulo||'').toLowerCase().includes(q)||(d.descricao||'').toLowerCase().includes(q)){
+      var ass=D.u.find(function(u){return u.id===d.assessor_id;});
+      results.push({mod:'Demanda',icon:'&#128203;',color:'#4a90d9',
+        titulo:d.titulo,sub:(ass?ass.nome+' &bull; ':'')+(d.status||''),
+        onclick:'switchDemTab("ativas");nv("dem")'});
+    }
+  });
+  // Search protocolos
+  D.p.forEach(function(p){
+    if((p.titulo||'').toLowerCase().includes(q)||('#'+p.numero).includes(q)||(p.descricao||'').toLowerCase().includes(q)){
+      results.push({mod:'Protocolo',icon:'&#128235;',color:'#c9a84c',
+        titulo:'#'+p.numero+' '+( p.titulo||''),sub:p.status||'',
+        onclick:'nv("prot")'});
+    }
+  });
+  // Search TB modules (processos, licitacoes, contratos, pareceres, oficios, pae, projetos_lei)
+  var tbMods=[
+    {key:'pj',label:'Processo',icon:'&#9878;&#65039;',color:'#9b59b6',nv:'prj'},
+    {key:'lic',label:'Licitação',icon:'&#128196;',color:'#27ae60',nv:'lic'},
+    {key:'con',label:'Contrato',icon:'&#128221;',color:'#e09440',nv:'con'},
+    {key:'par',label:'Parecer',icon:'&#128209;',color:'#4caf82',nv:'par'},
+    {key:'ofi',label:'Ofício',icon:'&#9993;&#65039;',color:'#4a90d9',nv:'ofi'},
+    {key:'pae',label:'PAE',icon:'&#128274;',color:'#e05c5c',nv:'pae'},
+    {key:'prj',label:'Proj. de Lei',icon:'&#128196;',color:'#8e44ad',nv:'prj'}
+  ];
+  tbMods.forEach(function(m){
+    var arr=D[m.key]||[];
+    arr.forEach(function(r){
+      var txt=JSON.stringify(r).toLowerCase();
+      if(txt.includes(q)){
+        results.push({mod:m.label,icon:m.icon,color:m.color,
+          titulo:r.numero?(r.numero+' — '+(r.titulo||r.objeto||r.assunto||'')):( r.titulo||r.objeto||r.assunto||r.numero||''),
+          sub:r.status||'',onclick:'nv("'+m.nv+'")'});
+      }
+    });
+  });
+  if(!results.length){
+    el.innerHTML='<p style="text-align:center;padding:40px;color:var(--gray)">Nenhum resultado para "'+q+'".</p>';
+    return;
+  }
+  el.innerHTML='<div style="font-size:12px;color:var(--gray);margin-bottom:12px">'+results.length+' resultado(s) para "'+q+'"</div>'+
+    results.map(function(r){
+      return '<div onclick="'+r.onclick+'" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:8px;cursor:pointer;background:rgba(255,255,255,.02)" onmouseover="this.style.background=\'rgba(255,255,255,.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,.02)\'">'+
+        '<div style="font-size:20px">'+r.icon+'</div>'+
+        '<div style="flex:1"><div style="font-size:13px;font-weight:600">'+r.titulo+'</div>'+
+        '<div style="font-size:11px;color:var(--gray)">'+r.mod+(r.sub?' &bull; '+r.sub:'')+'</div></div>'+
+        '<div style="font-size:10px;color:'+r.color+';font-weight:700;background:rgba(255,255,255,.05);padding:3px 8px;border-radius:10px">'+r.mod+'</div>'+
+        '</div>';
+    }).join('');
+}
+function verHistorico(id,num){
+  var SBU="https://ugioavmdfzajsarvlbtf.supabase.co",SBK="sb_publishable_G2P6G2eHLqix33TomxNWCA_9JyUuc8C";
+  sM('<div class="md" style="max-width:600px"><div class="mh"><h3>&#128337; Histórico — Protocolo #'+num+'</h3><button class="mx" onclick="cM()">x</button></div>'+
+    '<div class="mb" id="_hist_body"><div style="text-align:center;padding:20px;color:var(--gray)">Carregando...</div></div></div>');
+  // Build timeline from data we have
+  var p=D.p.find(function(x){return x.id===id;});
+  if(!p){document.getElementById('_hist_body').innerHTML='<p style="color:var(--gray)">Protocolo não encontrado.</p>';return;}
+  var eventos=[];
+  if(p.data_entrada)eventos.push({data:p.data_entrada,txt:'Protocolo recebido',cor:'#c9a84c'});
+  if(p.atualizado_em&&p.atualizado_em!==p.data_entrada)eventos.push({data:p.atualizado_em,txt:'Última atualização &bull; Status: '+(p.status||''),cor:'#4a90d9'});
+  if(p.respondido_em)eventos.push({data:p.respondido_em,txt:'Resposta registrada',cor:'#4caf82'});
+  // Load anexos for this protocol
+  fetch(SBU+'/rest/v1/anexos?referencia_id=eq.'+id+'&order=created_at.asc',{headers:{"apikey":SBK,"Authorization":"Bearer "+SBK}})
+    .then(function(r){return r.json();})
+    .then(function(docs){
+      docs.forEach(function(d){
+        eventos.push({data:d.created_at,txt:'Documento juntado: '+(d.nome||d.url.split('/').pop()),cor:'#e09440',url:d.url});
+      });
+      eventos.sort(function(a,b){return new Date(a.data)-new Date(b.data);});
+      var lst=document.getElementById('_hist_body');
+      if(!lst)return;
+      if(!eventos.length){lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum evento registrado.</p>';return;}
+      lst.innerHTML='<div style="position:relative;padding-left:24px">'+
+        eventos.map(function(e,i){
+          var d=new Date(e.data);
+          var ds=isNaN(d)?e.data:(d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
+          return '<div style="position:relative;padding-bottom:20px;padding-left:16px;border-left:2px solid rgba(255,255,255,.1)">'+
+            '<div style="position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:'+e.cor+'"></div>'+
+            '<div style="font-size:10px;color:var(--gray);margin-bottom:2px">'+ds+'</div>'+
+            '<div style="font-size:13px;font-weight:500">'+e.txt+'</div>'+
+            (e.url?'<a href="'+e.url+'" target="_blank" style="font-size:11px;color:#4a90d9">Abrir documento</a>':'')+
+            '</div>';
+        }).join('')+
+        '</div>';
+    }).catch(function(){
+      var lst=document.getElementById('_hist_body');
+      if(lst)lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Não foi possível carregar o histórico.</p>';
+    });
+}
+
 function switchDemTab(tab){window._demTab=tab;var el=document.getElementById('ct');if(el)rMD(el);}
+
+function rBusca(el){
+  el.innerHTML='<div class="tb"><div><h2>&#128269; Busca Global</h2><p>Pesquise em todos os módulos</p></div></div>'+
+    '<div class="pb"><div style="display:flex;gap:10px;margin-bottom:20px">'+
+    '<input class="ii" id="_bq" placeholder="Digite número, título, secretaria..." style="flex:1;font-size:14px" onkeydown="if(event.key===\'Enter\')executarBusca()">'+
+    '<button class="bn bp" onclick="executarBusca()" style="padding:10px 20px">Buscar</button></div>'+
+    '<div id="_bres"><p style="color:var(--gray);text-align:center;padding:30px">Digite para pesquisar em demandas, protocolos, processos, licitações, contratos, pareceres e ofícios.</p></div></div>';
+  setTimeout(()=>document.getElementById('_bq')&&document.getElementById('_bq').focus(),100);
+}
+async function executarBusca(){
+  var q=(document.getElementById('_bq')&&document.getElementById('_bq').value||'').trim().toLowerCase();
+  if(!q||q.length<2){ntf('Digite ao menos 2 caracteres.');return;}
+  var el=document.getElementById('_bres');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:var(--gray)"><div class="sp" style="margin:0 auto 10px"></div>Buscando...</div>';
+  var results=[];
+  // Search demandas
+  D.d.forEach(function(d){
+    if((d.titulo||'').toLowerCase().includes(q)||(d.descricao||'').toLowerCase().includes(q)){
+      var ass=D.u.find(function(u){return u.id===d.assessor_id;});
+      results.push({mod:'Demanda',icon:'&#128203;',color:'#4a90d9',
+        titulo:d.titulo,sub:(ass?ass.nome+' &bull; ':'')+(d.status||''),
+        onclick:'switchDemTab("ativas");nv("dem")'});
+    }
+  });
+  // Search protocolos
+  D.p.forEach(function(p){
+    if((p.titulo||'').toLowerCase().includes(q)||('#'+p.numero).includes(q)||(p.descricao||'').toLowerCase().includes(q)){
+      results.push({mod:'Protocolo',icon:'&#128235;',color:'#c9a84c',
+        titulo:'#'+p.numero+' '+( p.titulo||''),sub:p.status||'',
+        onclick:'nv("prot")'});
+    }
+  });
+  // Search TB modules (processos, licitacoes, contratos, pareceres, oficios, pae, projetos_lei)
+  var tbMods=[
+    {key:'pj',label:'Processo',icon:'&#9878;&#65039;',color:'#9b59b6',nv:'prj'},
+    {key:'lic',label:'Licitação',icon:'&#128196;',color:'#27ae60',nv:'lic'},
+    {key:'con',label:'Contrato',icon:'&#128221;',color:'#e09440',nv:'con'},
+    {key:'par',label:'Parecer',icon:'&#128209;',color:'#4caf82',nv:'par'},
+    {key:'ofi',label:'Ofício',icon:'&#9993;&#65039;',color:'#4a90d9',nv:'ofi'},
+    {key:'pae',label:'PAE',icon:'&#128274;',color:'#e05c5c',nv:'pae'},
+    {key:'prj',label:'Proj. de Lei',icon:'&#128196;',color:'#8e44ad',nv:'prj'}
+  ];
+  tbMods.forEach(function(m){
+    var arr=D[m.key]||[];
+    arr.forEach(function(r){
+      var txt=JSON.stringify(r).toLowerCase();
+      if(txt.includes(q)){
+        results.push({mod:m.label,icon:m.icon,color:m.color,
+          titulo:r.numero?(r.numero+' — '+(r.titulo||r.objeto||r.assunto||'')):( r.titulo||r.objeto||r.assunto||r.numero||''),
+          sub:r.status||'',onclick:'nv("'+m.nv+'")'});
+      }
+    });
+  });
+  if(!results.length){
+    el.innerHTML='<p style="text-align:center;padding:40px;color:var(--gray)">Nenhum resultado para "'+q+'".</p>';
+    return;
+  }
+  el.innerHTML='<div style="font-size:12px;color:var(--gray);margin-bottom:12px">'+results.length+' resultado(s) para "'+q+'"</div>'+
+    results.map(function(r){
+      return '<div onclick="'+r.onclick+'" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.07);margin-bottom:8px;cursor:pointer;background:rgba(255,255,255,.02)" onmouseover="this.style.background=\'rgba(255,255,255,.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,.02)\'">'+
+        '<div style="font-size:20px">'+r.icon+'</div>'+
+        '<div style="flex:1"><div style="font-size:13px;font-weight:600">'+r.titulo+'</div>'+
+        '<div style="font-size:11px;color:var(--gray)">'+r.mod+(r.sub?' &bull; '+r.sub:'')+'</div></div>'+
+        '<div style="font-size:10px;color:'+r.color+';font-weight:700;background:rgba(255,255,255,.05);padding:3px 8px;border-radius:10px">'+r.mod+'</div>'+
+        '</div>';
+    }).join('');
+}
+function verHistorico(id,num){
+  var SBU="https://ugioavmdfzajsarvlbtf.supabase.co",SBK="sb_publishable_G2P6G2eHLqix33TomxNWCA_9JyUuc8C";
+  sM('<div class="md" style="max-width:600px"><div class="mh"><h3>&#128337; Histórico — Protocolo #'+num+'</h3><button class="mx" onclick="cM()">x</button></div>'+
+    '<div class="mb" id="_hist_body"><div style="text-align:center;padding:20px;color:var(--gray)">Carregando...</div></div></div>');
+  // Build timeline from data we have
+  var p=D.p.find(function(x){return x.id===id;});
+  if(!p){document.getElementById('_hist_body').innerHTML='<p style="color:var(--gray)">Protocolo não encontrado.</p>';return;}
+  var eventos=[];
+  if(p.data_entrada)eventos.push({data:p.data_entrada,txt:'Protocolo recebido',cor:'#c9a84c'});
+  if(p.atualizado_em&&p.atualizado_em!==p.data_entrada)eventos.push({data:p.atualizado_em,txt:'Última atualização &bull; Status: '+(p.status||''),cor:'#4a90d9'});
+  if(p.respondido_em)eventos.push({data:p.respondido_em,txt:'Resposta registrada',cor:'#4caf82'});
+  // Load anexos for this protocol
+  fetch(SBU+'/rest/v1/anexos?referencia_id=eq.'+id+'&order=created_at.asc',{headers:{"apikey":SBK,"Authorization":"Bearer "+SBK}})
+    .then(function(r){return r.json();})
+    .then(function(docs){
+      docs.forEach(function(d){
+        eventos.push({data:d.created_at,txt:'Documento juntado: '+(d.nome||d.url.split('/').pop()),cor:'#e09440',url:d.url});
+      });
+      eventos.sort(function(a,b){return new Date(a.data)-new Date(b.data);});
+      var lst=document.getElementById('_hist_body');
+      if(!lst)return;
+      if(!eventos.length){lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum evento registrado.</p>';return;}
+      lst.innerHTML='<div style="position:relative;padding-left:24px">'+
+        eventos.map(function(e,i){
+          var d=new Date(e.data);
+          var ds=isNaN(d)?e.data:(d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
+          return '<div style="position:relative;padding-bottom:20px;padding-left:16px;border-left:2px solid rgba(255,255,255,.1)">'+
+            '<div style="position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:'+e.cor+'"></div>'+
+            '<div style="font-size:10px;color:var(--gray);margin-bottom:2px">'+ds+'</div>'+
+            '<div style="font-size:13px;font-weight:500">'+e.txt+'</div>'+
+            (e.url?'<a href="'+e.url+'" target="_blank" style="font-size:11px;color:#4a90d9">Abrir documento</a>':'')+
+            '</div>';
+        }).join('')+
+        '</div>';
+    }).catch(function(){
+      var lst=document.getElementById('_hist_body');
+      if(lst)lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Não foi possível carregar o histórico.</p>';
+    });
+}
+
 function switchDemTab(tab){window._demTab=tab;var c=document.getElementById('ct');if(c)rMD(c);}
 async function rMD(el){
   const uid=S.d&&S.d.id;
