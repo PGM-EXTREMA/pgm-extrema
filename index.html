@@ -245,7 +245,7 @@ if(!isPGM2){
 }
 nv("dash")}
 function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"busca",l:"&#128269; Busca"},{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0}]:[]),{id:"recibo",l:"Protocolo Fisico"},...(isPGM?[{id:"__gerador__",l:"Gerador de Docs"}]:[]),{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"},...(isPGM?[{id:"port",l:"Portarias"},{id:"dec",l:"Decretos"}]:[])];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
-async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="busca")rBusca(c);else if(v==="port")rRepo(c,"portaria");else if(v==="dec")rRepo(c,"decreto");else if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="__gerador__"){window.open("gerador.html","_blank");nv("dash");}else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
+async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="busca")rBusca(c);else if(v==="port")rRepo(c,"portaria");else if(v==="dec")rRepo(c,"decreto");else if(v==="prj"){rPrjExtra(c);}else if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="__gerador__"){window.open("gerador.html","_blank");nv("dash");}else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
 async function rl(){await lA();bN();await nv(V)}
 const SM={recebido:["#c9a84c","Recebido"],em_analise:["#4a90d9","Em Analise"],em_andamento:["#e09440","Em Andamento"],respondido:["#4caf82","Respondido"],arquivado:["#8a9bb0","Arquivado"]};
 function rD(el){
@@ -633,6 +633,113 @@ function verHistRecibo(id,num){
     });
 }
 
+
+function calcPrazoSancao(dataRetorno){
+  if(!dataRetorno)return null;
+  var d=new Date(dataRetorno);
+  if(isNaN(d.getTime()))return null;
+  var uteis=0,current=new Date(d);
+  current.setDate(current.getDate()+1);
+  while(uteis<15){
+    var dow=current.getDay();
+    if(dow!==0&&dow!==6)uteis++;
+    if(uteis<15)current.setDate(current.getDate()+1);
+  }
+  return current;
+}
+function rPrjExtra(el){
+  // Override: render projetos_lei with extra sanção logic
+  var cfg=TB.prj;
+  var rows=D.pl||[];
+  if(!rows.length){
+    el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2></div><button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oTf(\'prj\')">+ Novo</button></div>'+
+      '<div class="pb"><p style="text-align:center;padding:60px;color:var(--gray)">Nenhum projeto cadastrado.</p></div>';
+    return;
+  }
+  var hoje=new Date();hoje.setHours(0,0,0,0);
+  var rows_html=rows.map(function(row){
+    var prazoSancao=row.data_retorno?calcPrazoSancao(row.data_retorno):null;
+    var diasRestantes=prazoSancao?Math.ceil((prazoSancao-hoje)/(1000*60*60*24)):null;
+    var alertaSancao='';
+    if(prazoSancao&&row.status==='aprovado'){
+      if(diasRestantes<0){
+        alertaSancao='<span style="background:#e05c5c;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">PRAZO VENCIDO</span>';
+      } else if(diasRestantes<=3){
+        alertaSancao='<span style="background:#e09440;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
+      } else {
+        alertaSancao='<span style="background:rgba(76,175,130,.2);color:#4caf82;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
+      }
+    }
+    var stCor={em_elaboracao:'#8a9bb0',enviado_camara:'#c9a84c',aprovado:'#4a90d9',sancionado:'#4caf82',vetado:'#e05c5c',arquivado:'#555'}[row.status]||'#8a9bb0';
+    var cells=cfg.cols.map(function(c){
+      var v=row[c.k]||'';
+      if(c.dt&&v)v=fd(v);
+      return '<td style="padding:10px 14px;font-size:13px">'+v+'</td>';
+    }).join('');
+    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04)">'+
+      '<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:6px">'+
+        '<div style="width:6px;height:6px;border-radius:50%;background:'+stCor+';flex-shrink:0"></div>'+
+        '<span style="font-size:13px;font-weight:600">'+(row.numero_pgm||'—')+'</span>'+
+        (row.numero_camara?'<span style="font-size:11px;color:var(--gray)">/ C\u00e2mara: '+row.numero_camara+'</span>':'')+
+        alertaSancao+
+      '</div></td>'+
+      '<td style="padding:10px 14px;font-size:12px;max-width:300px">'+(row.ementa||'').slice(0,80)+(row.ementa&&row.ementa.length>80?'...':'')+'</td>'+
+      '<td style="padding:10px 14px"><span style="font-size:11px;background:rgba(255,255,255,.06);padding:2px 8px;border-radius:10px;color:'+stCor+'">'+(row.status||'').replace('_',' ')+'</span></td>'+
+      '<td style="padding:10px 14px;font-size:11px;color:var(--gray)">'+(row.data_envio_camara?fd(row.data_envio_camara):'—')+'</td>'+
+      '<td style="padding:10px 14px;font-size:11px;color:var(--gray)">'+(row.data_retorno?fd(row.data_retorno)+(prazoSancao?' → sancionar até <b style="color:'+( diasRestantes<0?'#e05c5c':diasRestantes<=3?'#e09440':'#4caf82')+'">'+prazoSancao.toLocaleDateString('pt-BR')+'</b>':''):'—')+'</td>'+
+      '<td style="padding:10px 14px"><div style="display:flex;gap:4px;flex-wrap:wrap">'+
+        '<button class="bsm" style="background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)" data-v="prj" data-id="'+row.id+'" onclick="oTf(this.dataset.v,this.dataset.id)">Edit</button>'+
+        '<button class="bsm" style="background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.2)" data-tb="projetos_lei" data-dk="pl" data-id="'+row.id+'" onclick="xT(this.dataset.tb,this.dataset.dk,this.dataset.id)">Del</button>'+
+        '<button class="bsm" style="background:rgba(46,117,182,.12);color:#4a90d9;border:1px solid rgba(46,117,182,.3)" data-m="prj" data-id="'+row.id+'" onclick="oAnexos(this.dataset.m,this.dataset.id)">&#128206; Docs</button>'+
+      '</div></td>'+
+      (row.obs_assessor?'<tr style="background:rgba(201,168,76,.04)"><td colspan="6" style="padding:4px 14px 8px"><span style="font-size:10px;color:#c9a84c;font-weight:700">Obs: </span><span style="font-size:11px;color:#ddd">'+row.obs_assessor+'</span></td></tr>':'')+
+    '</tr>';
+  }).join('');
+
+  el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2><p>'+rows.length+' projeto(s) cadastrado(s)</p></div>'+
+    '<div style="display:flex;gap:8px;align-items:center">'+
+    '<input class="ii" id="_prj_busca" placeholder="&#128269; Buscar por tema ou ementa..." style="width:260px;font-size:12px" oninput="filtrarPrj(this.value)">'+
+    '<button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oTf(\'prj\')">+ Novo</button></div></div>'+
+    '<div class="pb"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse" id="_prj_tabela">'+
+    '<thead><tr style="border-bottom:1px solid rgba(255,255,255,.08)">'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">N\u00ba</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Ementa</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Status</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Envio C\u00e2mara</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Retorno / Prazo San\u00e7\u00e3o</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">A\u00e7\u00f5es</th>'+
+    '</tr></thead>'+
+    '<tbody id="_prj_tbody">'+rows_html+'</tbody></table></div></div>';
+  window._prjRows=rows;
+}
+function filtrarPrj(q){
+  q=q.toLowerCase();
+  var rows=window._prjRows||[];
+  var filtered=q?rows.filter(function(r){
+    return (r.ementa||'').toLowerCase().includes(q)||
+           (r.numero_pgm||'').toLowerCase().includes(q)||
+           (r.numero_camara||'').toLowerCase().includes(q)||
+           (r.obs||'').toLowerCase().includes(q)||
+           (r.autor||'').toLowerCase().includes(q);
+  }):rows;
+  var tbody=document.getElementById('_prj_tbody');
+  if(!tbody)return;
+  // Re-render only filtered rows count info
+  var info=document.querySelector('#_prj_tabela')&&document.querySelector('.tb p');
+  if(info)info.textContent=(q?filtered.length+' de '+rows.length:rows.length)+' projeto(s)';
+  // Just hide/show rows
+  var trs=tbody.querySelectorAll('tr');
+  var rowIdx=0;
+  trs.forEach(function(tr){
+    if(tr.cells&&tr.cells.length>2){
+      var show=!q||filtered.some(function(r){
+        return tr.innerHTML.includes(r.id);
+      });
+      tr.style.display=show?'':'none';
+    }
+  });
+}
+
 function switchDemTab(tab){window._demTab=tab;var el=document.getElementById('ct');if(el)rMD(el);}
 
 function rBusca(el){
@@ -782,6 +889,113 @@ function verHistRecibo(id,num){
     });
 }
 
+
+function calcPrazoSancao(dataRetorno){
+  if(!dataRetorno)return null;
+  var d=new Date(dataRetorno);
+  if(isNaN(d.getTime()))return null;
+  var uteis=0,current=new Date(d);
+  current.setDate(current.getDate()+1);
+  while(uteis<15){
+    var dow=current.getDay();
+    if(dow!==0&&dow!==6)uteis++;
+    if(uteis<15)current.setDate(current.getDate()+1);
+  }
+  return current;
+}
+function rPrjExtra(el){
+  // Override: render projetos_lei with extra sanção logic
+  var cfg=TB.prj;
+  var rows=D.pl||[];
+  if(!rows.length){
+    el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2></div><button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oTf(\'prj\')">+ Novo</button></div>'+
+      '<div class="pb"><p style="text-align:center;padding:60px;color:var(--gray)">Nenhum projeto cadastrado.</p></div>';
+    return;
+  }
+  var hoje=new Date();hoje.setHours(0,0,0,0);
+  var rows_html=rows.map(function(row){
+    var prazoSancao=row.data_retorno?calcPrazoSancao(row.data_retorno):null;
+    var diasRestantes=prazoSancao?Math.ceil((prazoSancao-hoje)/(1000*60*60*24)):null;
+    var alertaSancao='';
+    if(prazoSancao&&row.status==='aprovado'){
+      if(diasRestantes<0){
+        alertaSancao='<span style="background:#e05c5c;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">PRAZO VENCIDO</span>';
+      } else if(diasRestantes<=3){
+        alertaSancao='<span style="background:#e09440;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
+      } else {
+        alertaSancao='<span style="background:rgba(76,175,130,.2);color:#4caf82;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px">'+diasRestantes+'d p/ sancionar</span>';
+      }
+    }
+    var stCor={em_elaboracao:'#8a9bb0',enviado_camara:'#c9a84c',aprovado:'#4a90d9',sancionado:'#4caf82',vetado:'#e05c5c',arquivado:'#555'}[row.status]||'#8a9bb0';
+    var cells=cfg.cols.map(function(c){
+      var v=row[c.k]||'';
+      if(c.dt&&v)v=fd(v);
+      return '<td style="padding:10px 14px;font-size:13px">'+v+'</td>';
+    }).join('');
+    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04)">'+
+      '<td style="padding:10px 14px"><div style="display:flex;align-items:center;gap:6px">'+
+        '<div style="width:6px;height:6px;border-radius:50%;background:'+stCor+';flex-shrink:0"></div>'+
+        '<span style="font-size:13px;font-weight:600">'+(row.numero_pgm||'—')+'</span>'+
+        (row.numero_camara?'<span style="font-size:11px;color:var(--gray)">/ C\u00e2mara: '+row.numero_camara+'</span>':'')+
+        alertaSancao+
+      '</div></td>'+
+      '<td style="padding:10px 14px;font-size:12px;max-width:300px">'+(row.ementa||'').slice(0,80)+(row.ementa&&row.ementa.length>80?'...':'')+'</td>'+
+      '<td style="padding:10px 14px"><span style="font-size:11px;background:rgba(255,255,255,.06);padding:2px 8px;border-radius:10px;color:'+stCor+'">'+(row.status||'').replace('_',' ')+'</span></td>'+
+      '<td style="padding:10px 14px;font-size:11px;color:var(--gray)">'+(row.data_envio_camara?fd(row.data_envio_camara):'—')+'</td>'+
+      '<td style="padding:10px 14px;font-size:11px;color:var(--gray)">'+(row.data_retorno?fd(row.data_retorno)+(prazoSancao?' → sancionar até <b style="color:'+( diasRestantes<0?'#e05c5c':diasRestantes<=3?'#e09440':'#4caf82')+'">'+prazoSancao.toLocaleDateString('pt-BR')+'</b>':''):'—')+'</td>'+
+      '<td style="padding:10px 14px"><div style="display:flex;gap:4px;flex-wrap:wrap">'+
+        '<button class="bsm" style="background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)" data-v="prj" data-id="'+row.id+'" onclick="oTf(this.dataset.v,this.dataset.id)">Edit</button>'+
+        '<button class="bsm" style="background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.2)" data-tb="projetos_lei" data-dk="pl" data-id="'+row.id+'" onclick="xT(this.dataset.tb,this.dataset.dk,this.dataset.id)">Del</button>'+
+        '<button class="bsm" style="background:rgba(46,117,182,.12);color:#4a90d9;border:1px solid rgba(46,117,182,.3)" data-m="prj" data-id="'+row.id+'" onclick="oAnexos(this.dataset.m,this.dataset.id)">&#128206; Docs</button>'+
+      '</div></td>'+
+      (row.obs_assessor?'<tr style="background:rgba(201,168,76,.04)"><td colspan="6" style="padding:4px 14px 8px"><span style="font-size:10px;color:#c9a84c;font-weight:700">Obs: </span><span style="font-size:11px;color:#ddd">'+row.obs_assessor+'</span></td></tr>':'')+
+    '</tr>';
+  }).join('');
+
+  el.innerHTML='<div class="tb"><div><h2>Projetos de Lei</h2><p>'+rows.length+' projeto(s) cadastrado(s)</p></div>'+
+    '<div style="display:flex;gap:8px;align-items:center">'+
+    '<input class="ii" id="_prj_busca" placeholder="&#128269; Buscar por tema ou ementa..." style="width:260px;font-size:12px" oninput="filtrarPrj(this.value)">'+
+    '<button class="bsm" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)" onclick="oTf(\'prj\')">+ Novo</button></div></div>'+
+    '<div class="pb"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse" id="_prj_tabela">'+
+    '<thead><tr style="border-bottom:1px solid rgba(255,255,255,.08)">'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">N\u00ba</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Ementa</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Status</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Envio C\u00e2mara</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">Retorno / Prazo San\u00e7\u00e3o</th>'+
+    '<th style="padding:8px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--gray)">A\u00e7\u00f5es</th>'+
+    '</tr></thead>'+
+    '<tbody id="_prj_tbody">'+rows_html+'</tbody></table></div></div>';
+  window._prjRows=rows;
+}
+function filtrarPrj(q){
+  q=q.toLowerCase();
+  var rows=window._prjRows||[];
+  var filtered=q?rows.filter(function(r){
+    return (r.ementa||'').toLowerCase().includes(q)||
+           (r.numero_pgm||'').toLowerCase().includes(q)||
+           (r.numero_camara||'').toLowerCase().includes(q)||
+           (r.obs||'').toLowerCase().includes(q)||
+           (r.autor||'').toLowerCase().includes(q);
+  }):rows;
+  var tbody=document.getElementById('_prj_tbody');
+  if(!tbody)return;
+  // Re-render only filtered rows count info
+  var info=document.querySelector('#_prj_tabela')&&document.querySelector('.tb p');
+  if(info)info.textContent=(q?filtered.length+' de '+rows.length:rows.length)+' projeto(s)';
+  // Just hide/show rows
+  var trs=tbody.querySelectorAll('tr');
+  var rowIdx=0;
+  trs.forEach(function(tr){
+    if(tr.cells&&tr.cells.length>2){
+      var show=!q||filtered.some(function(r){
+        return tr.innerHTML.includes(r.id);
+      });
+      tr.style.display=show?'':'none';
+    }
+  });
+}
+
 function switchDemTab(tab){window._demTab=tab;var c=document.getElementById('ct');if(c)rMD(c);}
 async function rMD(el){
   const uid=S.d&&S.d.id;
@@ -869,7 +1083,7 @@ async function rMD(el){
   }));
   el.innerHTML="<div class=\"tb\"><div><h2>"+titulo+"</h2><p>"+subtitulo+"</p></div></div><div class=\"pb\" style=\"padding:16px\">"+_tabsHtml+cards.join("")+"</div>";
 }
-const TB={jud:{l:"Processos Judiciais",tb:"processos_judiciais",dk:"j",cols:[{k:"numero",l:"Numero"},{k:"assunto",l:"Assunto"},{k:"vara",l:"Vara"},{k:"fase",l:"Fase"}],flds:[{k:"numero",l:"Numero",r:1},{k:"assunto",l:"Assunto",r:1,f:1},{k:"vara",l:"Vara"},{k:"fase",l:"Fase",s:["conhecimento","recurso","execucao","encerrado"]},{k:"prazo",l:"Prazo",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"polo",l:"Polo",s:["reu","autor"]},{k:"valor",l:"Valor",tp:"number"},{k:"obs",l:"Obs",ta:1,f:1}]},lic:{l:"Licitacoes",tb:"licitacoes",dk:"l",cols:[{k:"numero",l:"Numero"},{k:"modalidade",l:"Modalidade"},{k:"objeto",l:"Objeto"},{k:"data_entrada",l:"Entrada",dt:1},{k:"data_saida",l:"Saida",dt:1},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"modalidade",l:"Modalidade",s:["Pregao","Concorrencia","Dialogo Competitivo","Dispensa","Inexigibilidade","Credenciamento","Chamamento Publico","Chamamento Publico 3 Setor"]},{k:"objeto",l:"Objeto",r:1,f:1,ta:1},{k:"data_entrada",l:"Data de Entrada",dt:1},{k:"data_saida",l:"Data de Saida",dt:1},{k:"prazo",l:"Prazo Analise",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"status",l:"Status",s:["recebido","em_analise","aprovado","ressalva","impugnado","devolvido"]},{k:"valor",l:"Valor Estimado",tp:"number"},{k:"obs",l:"Obs",ta:1,f:1}]},con:{l:"Contratos",tb:"contratos",dk:"c",cols:[{k:"numero",l:"Numero"},{k:"fornecedor",l:"Fornecedor"},{k:"valor",l:"Valor",cu:1},{k:"fim",l:"Vencimento",dt:1},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"fornecedor",l:"Fornecedor",r:1},{k:"objeto",l:"Objeto",ta:1,f:1},{k:"valor",l:"Valor",tp:"number"},{k:"inicio",l:"Inicio",dt:1},{k:"fim",l:"Vencimento",r:1,dt:1},{k:"status",l:"Status",s:["vigente","encerrado"]}]},par:{l:"Pareceres",tb:"pareceres",dk:"pr",cols:[{k:"tipo",l:"Tipo"},{k:"assunto",l:"Assunto"},{k:"conclusao",l:"Conclusao"}],flds:[{k:"numero",l:"Numero",r:1},{k:"tipo",l:"Tipo",s:["Juridico","Licitatorio","Ambiental","Contratual","Legislativo","Outro"]},{k:"assunto",l:"Assunto",r:1,f:1},{k:"solicitante",l:"Solicitante"},{k:"emissor_id",l:"Emissor",us:1},{k:"data",l:"Data",dt:1},{k:"conclusao",l:"Conclusao",s:["favoravel","desfavoravel","ressalva"]},{k:"sintese",l:"Sintese",ta:1,f:1}]},ofi:{l:"Oficios",tb:"oficios",dk:"o",cols:[{k:"numero",l:"Numero"},{k:"assunto",l:"Assunto"},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero"},{k:"assunto",l:"Assunto",r:1,f:1},{k:"origem",l:"Origem",s:["MP","Camara","Federal","Estadual","Outro"]},{k:"recebido",l:"Recebido",dt:1},{k:"prazo",l:"Prazo",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"status",l:"Status",s:["pendente","respondido"]}]},pae:{l:"PAE",tb:"pae",dk:"ae",cols:[{k:"numero",l:"Numero"},{k:"interessado",l:"Interessado"},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"interessado",l:"Interessado",r:1},{k:"tipo",l:"Tipo",s:["Sindicancia","PAD","Impugnacao","Recurso Administrativo","Tomada de Contas","Outro"]},{k:"assunto",l:"Assunto",r:1,f:1,ta:1},{k:"prazo",l:"Prazo",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"status",l:"Status",s:["analise","instrucao","julgado","arquivado"]}]},prj:{l:"Projetos de Lei",tb:"projetos_lei",dk:"pl",cols:[{k:"numero",l:"Numero"},{k:"autor",l:"Autor"},{k:"ementa",l:"Ementa"},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"autor",l:"Autor"},{k:"ementa",l:"Ementa",r:1,f:1,ta:1},{k:"aprovado",l:"Aprovado",r:1,dt:1},{k:"prazo",l:"Prazo Sancao",dt:1},{k:"status",l:"Status",s:["aguardando","sancionado","vetado"]}]}};
+const TB={jud:{l:"Processos Judiciais",tb:"processos_judiciais",dk:"j",cols:[{k:"numero",l:"Numero"},{k:"assunto",l:"Assunto"},{k:"vara",l:"Vara"},{k:"fase",l:"Fase"}],flds:[{k:"numero",l:"Numero",r:1},{k:"assunto",l:"Assunto",r:1,f:1},{k:"vara",l:"Vara"},{k:"fase",l:"Fase",s:["conhecimento","recurso","execucao","encerrado"]},{k:"prazo",l:"Prazo",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"polo",l:"Polo",s:["reu","autor"]},{k:"valor",l:"Valor",tp:"number"},{k:"obs",l:"Obs",ta:1,f:1}]},lic:{l:"Licitacoes",tb:"licitacoes",dk:"l",cols:[{k:"numero",l:"Numero"},{k:"modalidade",l:"Modalidade"},{k:"objeto",l:"Objeto"},{k:"data_entrada",l:"Entrada",dt:1},{k:"data_saida",l:"Saida",dt:1},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"modalidade",l:"Modalidade",s:["Pregao","Concorrencia","Dialogo Competitivo","Dispensa","Inexigibilidade","Credenciamento","Chamamento Publico","Chamamento Publico 3 Setor"]},{k:"objeto",l:"Objeto",r:1,f:1,ta:1},{k:"data_entrada",l:"Data de Entrada",dt:1},{k:"data_saida",l:"Data de Saida",dt:1},{k:"prazo",l:"Prazo Analise",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"status",l:"Status",s:["recebido","em_analise","aprovado","ressalva","impugnado","devolvido"]},{k:"valor",l:"Valor Estimado",tp:"number"},{k:"obs",l:"Obs",ta:1,f:1}]},con:{l:"Contratos",tb:"contratos",dk:"c",cols:[{k:"numero",l:"Numero"},{k:"fornecedor",l:"Fornecedor"},{k:"valor",l:"Valor",cu:1},{k:"fim",l:"Vencimento",dt:1},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"fornecedor",l:"Fornecedor",r:1},{k:"objeto",l:"Objeto",ta:1,f:1},{k:"valor",l:"Valor",tp:"number"},{k:"inicio",l:"Inicio",dt:1},{k:"fim",l:"Vencimento",r:1,dt:1},{k:"status",l:"Status",s:["vigente","encerrado"]}]},par:{l:"Pareceres",tb:"pareceres",dk:"pr",cols:[{k:"tipo",l:"Tipo"},{k:"assunto",l:"Assunto"},{k:"conclusao",l:"Conclusao"}],flds:[{k:"numero",l:"Numero",r:1},{k:"tipo",l:"Tipo",s:["Juridico","Licitatorio","Ambiental","Contratual","Legislativo","Outro"]},{k:"assunto",l:"Assunto",r:1,f:1},{k:"solicitante",l:"Solicitante"},{k:"emissor_id",l:"Emissor",us:1},{k:"data",l:"Data",dt:1},{k:"conclusao",l:"Conclusao",s:["favoravel","desfavoravel","ressalva"]},{k:"sintese",l:"Sintese",ta:1,f:1}]},ofi:{l:"Oficios",tb:"oficios",dk:"o",cols:[{k:"numero",l:"Numero"},{k:"assunto",l:"Assunto"},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero"},{k:"assunto",l:"Assunto",r:1,f:1},{k:"origem",l:"Origem",s:["MP","Camara","Federal","Estadual","Outro"]},{k:"recebido",l:"Recebido",dt:1},{k:"prazo",l:"Prazo",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"status",l:"Status",s:["pendente","respondido"]}]},pae:{l:"PAE",tb:"pae",dk:"ae",cols:[{k:"numero",l:"Numero"},{k:"interessado",l:"Interessado"},{k:"status",l:"Status"}],flds:[{k:"numero",l:"Numero",r:1},{k:"interessado",l:"Interessado",r:1},{k:"tipo",l:"Tipo",s:["Sindicancia","PAD","Impugnacao","Recurso Administrativo","Tomada de Contas","Outro"]},{k:"assunto",l:"Assunto",r:1,f:1,ta:1},{k:"prazo",l:"Prazo",dt:1},{k:"responsavel_id",l:"Responsavel",us:1},{k:"status",l:"Status",s:["analise","instrucao","julgado","arquivado"]}]},prj:{l:"Projetos de Lei",tb:"projetos_lei",dk:"pl",cols:[{k:"numero_pgm",l:"Nº PGM"},{k:"numero_camara",l:"Nº Câmara"},{k:"ementa",l:"Ementa"},{k:"status",l:"Status"},{k:"data_envio_camara",l:"Envio Câmara",dt:1}],flds:[{k:"numero_pgm",l:"Nº Interno (PGM)",r:1},{k:"numero_camara",l:"Nº da Câmara",tip:"Preenchido após protocolo na Câmara"},{k:"autor",l:"Autor"},{k:"ementa",l:"Ementa / Tema",r:1,f:1,ta:1},{k:"data_envio_camara",l:"Data de Envio à Câmara",dt:1},{k:"data_retorno",l:"Data de Retorno (Aprovado)",dt:1},{k:"status",l:"Status",s:["em_elaboracao","enviado_camara","aprovado","sancionado","vetado","arquivado"]},{k:"obs",l:"Observações",ta:1,f:1}]}};
 function rT(v,el){const cfg=TB[v];if(!cfg){el.innerHTML="<p style=\"padding:40px;color:var(--gray)\">Pagina nao encontrada</p>";return}const dados=D[cfg.dk]||[];const rows=dados.length===0?"<tr><td colspan=\""+(cfg.cols.length+1)+"\" class=\"e2\">Nenhum registro</td></tr>":dados.map(function(row){const cells=cfg.cols.map(col=>"<td>"+(col.dt?fd(row[col.k]):col.cu?fc(row[col.k]):"<span style=\"font-size:12px\">"+(row[col.k]||"-")+"</span>")+"</td>").join("");return"<tr>"+cells+"<td><div style=\"display:flex;gap:4px\"><button class=\"bsm\" style=\"background:rgba(255,255,255,.05);color:var(--gray);border:1px solid rgba(255,255,255,.1)\" data-v=\""+v+"\" data-id=\""+row.id+"\" onclick=\"oTf(this.dataset.v,this.dataset.id)\">Edit</button><button class=\"bsm\" style=\"background:rgba(224,92,92,.1);color:#e05c5c;border:1px solid rgba(224,92,92,.2)\" data-tb=\""+cfg.tb+"\" data-dk=\""+cfg.dk+"\" data-id=\""+row.id+"\" onclick=\"xT(this.dataset.tb,this.dataset.dk,this.dataset.id)\">Del</button></div></td></tr>"+(row.obs_assessor?"<tr style=\"background:rgba(201,168,76,.04)\"><td colspan=\"100\" style=\"padding:4px 14px 8px\"><span style=\"font-size:10px;color:#c9a84c;font-weight:700\">&#128221; Obs. Assessor: </span><span style=\"font-size:11px;color:#ddd\">"+row.obs_assessor+"</span></td></tr>":"")}).join("");el.innerHTML="<div class=\"tb\"><div><h2>"+cfg.l+"</h2></div><button class=\"bn bp\" data-v=\""+v+"\" onclick=\"oTf(this.dataset.v,null)\">+ Novo</button></div><div class=\"pb\"><div class=\"tw\"><table><thead><tr>"+cfg.cols.map(col=>"<th>"+col.l+"</th>").join("")+"<th>Acoes</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>"}
 function oTf(v,id){const cfg=TB[v];const row=id?(D[cfg.dk]||[]).find(x=>x.id===id):{};if(!row&&id)return;const flds=cfg.flds.map(function(f){let inp;if(f.s){inp="<select id=\"_tf_"+f.k+"\"><option value=\"\">-</option>"+f.s.map(o=>"<option"+(row[f.k]===o?" selected":"")+">"+o+"</option>").join("")+"</select>"}else if(f.us){inp="<select id=\"_tf_"+f.k+"\"><option value=\"\">PG</option>"+D.u.map(u=>"<option value=\""+u.id+"\""+( row[f.k]===u.id?" selected":"")+">"+u.nome+"</option>").join("")+"</select>"}else if(f.ta){inp="<textarea id=\"_tf_"+f.k+"\" rows=\"3\">"+(row[f.k]||"")+"</textarea>"}else if(f.dt){inp="<input type=\"date\" id=\"_tf_"+f.k+"\" value=\""+(row[f.k]?row[f.k].split("T")[0]:"")+"\">"}else{inp="<input type=\""+(f.tp||"text")+"\" id=\"_tf_"+f.k+"\" value=\""+(row[f.k]||"")+"\">"}return"<div class=\"fi"+(f.f?" ff":"")+"\"><label>"+f.l+(f.r?" *":"")+"</label>"+inp+"</div>"}).join("");const _obsVal=(row&&row.obs_assessor)||"";const _obsField="<div style='margin-top:12px;padding:10px 12px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:7px'><div style='font-size:10px;color:#c9a84c;text-transform:uppercase;font-weight:700;margin-bottom:5px'>&#128221; Observações do Assessor</div><textarea id='_tf_obs_assessor' rows='3' style='width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px;color:#f0ece3;font-size:12px;font-family:inherit;resize:vertical' placeholder='Registre observações relevantes...'>"+_obsVal+"</textarea></div>";sM("<div class=\"md\"><div class=\"mh\"><h3>"+(id?"Editar":"Novo - "+cfg.l)+"</h3><button class=\"mx\" onclick=\"cM()\">x</button></div><div class=\"mb\"><div class=\"fr\">"+flds+"</div>"+_obsField+"</div><div class=\"mf\"><button class=\"bn bs\" onclick=\"cM()\">Cancelar</button><button class=\"bn bp\" data-v=\""+v+"\" data-id=\""+(id||"")+"\" onclick=\"sT(this.dataset.v,this.dataset.id)\">Salvar</button></div></div>")}
 async function sT(v,id){const cfg=TB[v];const o={};cfg.flds.forEach(f=>{const e=document.getElementById("_tf_"+f.k);if(e)o[f.k]=e.value||null});const _oa=document.getElementById("_tf_obs_assessor");if(_oa!==null)o.obs_assessor=_oa.value.trim()||null;const ms=cfg.flds.find(f=>f.r&&!o[f.k]);if(ms){ntf("Preencha: "+ms.l,"#e05c5c");return}if(id)await SB.from(cfg.tb).update(o).eq("id",id);else await SB.from(cfg.tb).insert(o);ntf("Salvo!");cM();await rl()}
