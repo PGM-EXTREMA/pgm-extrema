@@ -244,8 +244,8 @@ if(!isPGM2){
   localStorage.setItem(lastKey,new Date().toISOString());
 }
 nv("dash")}
-function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"busca",l:"&#128269; Busca"},{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0}]:[]),{id:"recibo",l:"Protocolo Fisico"},...(isPGM?[{id:"__gerador__",l:"Gerador de Docs"}]:[]),{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"}];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
-async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="busca")rBusca(c);else if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="__gerador__"){window.open("gerador.html","_blank");nv("dash");}else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
+function bN(){const pp=D.p.filter(x=>x.status==="recebido"||x.status==="em_analise").length;const dv=D.d.filter(x=>{if(x.status==="concluida")return false;const r=dl(x.prazo);return r!==null&&r<0}).length;const isPGM=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");const its=[{id:"busca",l:"&#128269; Busca"},{id:"dash",l:"Dashboard"},...(isPGM?[{id:"prot",l:"Protocolos",b:pp},{id:"dem",l:"Demandas",b:dv}]:[]),{id:"mdem",l:"Minhas Demandas",b:window._novDem||0},...(isPGM?[{id:"assinar",l:"Para Assinar",b:window._pendSign||0}]:[]),{id:"recibo",l:"Protocolo Fisico"},...(isPGM?[{id:"__gerador__",l:"Gerador de Docs"}]:[]),{id:"jud",l:"Processos Judiciais"},{id:"lic",l:"Licitacoes"},{id:"con",l:"Contratos"},{id:"par",l:"Pareceres"},{id:"ofi",l:"Oficios"},{id:"pae",l:"PAE"},{id:"prj",l:"Proj. de Lei"},...(isPGM?[{id:"port",l:"Portarias"},{id:"dec",l:"Decretos"}]:[])];document.getElementById("nm").innerHTML=its.map(n=>"<button class=\"ni"+(V===n.id?" a":"")+"\" data-id=\""+n.id+"\" onclick=\"nv(this.dataset.id)\">"+n.l+(n.b?"<span class=\"nb\">"+n.b+"</span>":"")+"</button>").join("")}
+async function nv(v){V=v;bN();const c=document.getElementById("ct");if(v==="busca")rBusca(c);else if(v==="port")rRepo(c,"portaria");else if(v==="dec")rRepo(c,"decreto");else if(v==="dash")rD(c);else if(v==="prot")rP(c,"todos");else if(v==="dem")rDm(c,"todas");else if(v==="assinar")rAssinar(c);else if(v==="recibo")rRecibo(c);else if(v==="__gerador__"){window.open("gerador.html","_blank");nv("dash");}else if(v==="mdem"){c.innerHTML="<div style=\"padding:60px;text-align:center;color:var(--gray)\"><div class=\"sp\" style=\"margin:0 auto\"></div></div>";await rMD(c);}else rT(v,c)}
 async function rl(){await lA();bN();await nv(V)}
 const SM={recebido:["#c9a84c","Recebido"],em_analise:["#4a90d9","Em Analise"],em_andamento:["#e09440","Em Andamento"],respondido:["#4caf82","Respondido"],arquivado:["#8a9bb0","Arquivado"]};
 function rD(el){
@@ -592,6 +592,47 @@ function verHistorico(id,num){
     });
 }
 
+
+function verHistRecibo(id,num){
+  var SBU="https://ugioavmdfzajsarvlbtf.supabase.co",SBK="sb_publishable_G2P6G2eHLqix33TomxNWCA_9JyUuc8C";
+  sM('<div class="md" style="max-width:600px"><div class="mh"><h3>&#128337; Histórico — Protocolo Físico #'+num+'</h3><button class="mx" onclick="cM()">x</button></div>'+
+    '<div class="mb" id="_hrec_body"><div style="text-align:center;padding:20px;color:var(--gray)">Carregando...</div></div></div>');
+  fetch(SBU+'/rest/v1/recibos_fisicos?id=eq.'+id,{headers:{"apikey":SBK,"Authorization":"Bearer "+SBK}})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var r=rows[0];
+      if(!r){document.getElementById('_hrec_body').innerHTML='<p style="color:var(--gray)">Não encontrado.</p>';return;}
+      var eventos=[];
+      if(r.data_entrada)eventos.push({data:r.data_entrada,txt:'Protocolo registrado',cor:'#c9a84c',
+        sub:(r.secretaria||'')+(r.portador?' — '+r.portador:'')});
+      if(r.data_entrega)eventos.push({data:r.data_entrega,txt:'Entregue ao destinatário',cor:'#4caf82'});
+      if(r.demanda_id)eventos.push({data:r.data_entrada,txt:'Demanda criada a partir deste protocolo',cor:'#4a90d9'});
+      // Load anexos
+      fetch(SBU+'/rest/v1/anexos?referencia_id=eq.'+id+'&order=created_at.asc',{headers:{"apikey":SBK,"Authorization":"Bearer "+SBK}})
+        .then(function(r2){return r2.json();})
+        .then(function(docs){
+          docs.forEach(function(d){
+            eventos.push({data:d.created_at,txt:'Documento: '+(d.nome||d.url.split('/').pop()),cor:'#e09440',url:d.url});
+          });
+          eventos.sort(function(a,b){return new Date(a.data)-new Date(b.data);});
+          var lst=document.getElementById('_hrec_body');if(!lst)return;
+          if(!eventos.length){lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum evento registrado.</p>';return;}
+          lst.innerHTML='<div style="padding-left:16px">'+
+            eventos.map(function(e){
+              var d=new Date(e.data);
+              var ds=isNaN(d.getTime())?String(e.data).slice(0,10):(d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
+              return '<div style="position:relative;padding-bottom:16px;padding-left:16px;border-left:2px solid rgba(255,255,255,.1)">'+
+                '<div style="position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:'+e.cor+'"></div>'+
+                '<div style="font-size:10px;color:var(--gray)">'+ds+'</div>'+
+                '<div style="font-size:13px;font-weight:500">'+e.txt+'</div>'+
+                (e.sub?'<div style="font-size:11px;color:var(--gray)">'+e.sub+'</div>':'')+
+                (e.url?'<a href="'+e.url+'" target="_blank" style="font-size:11px;color:#4a90d9">Abrir documento</a>':'')+
+                '</div>';
+            }).join('')+'</div>';
+        });
+    });
+}
+
 function switchDemTab(tab){window._demTab=tab;var el=document.getElementById('ct');if(el)rMD(el);}
 
 function rBusca(el){
@@ -697,6 +738,47 @@ function verHistorico(id,num){
     }).catch(function(){
       var lst=document.getElementById('_hist_body');
       if(lst)lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Não foi possível carregar o histórico.</p>';
+    });
+}
+
+
+function verHistRecibo(id,num){
+  var SBU="https://ugioavmdfzajsarvlbtf.supabase.co",SBK="sb_publishable_G2P6G2eHLqix33TomxNWCA_9JyUuc8C";
+  sM('<div class="md" style="max-width:600px"><div class="mh"><h3>&#128337; Histórico — Protocolo Físico #'+num+'</h3><button class="mx" onclick="cM()">x</button></div>'+
+    '<div class="mb" id="_hrec_body"><div style="text-align:center;padding:20px;color:var(--gray)">Carregando...</div></div></div>');
+  fetch(SBU+'/rest/v1/recibos_fisicos?id=eq.'+id,{headers:{"apikey":SBK,"Authorization":"Bearer "+SBK}})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var r=rows[0];
+      if(!r){document.getElementById('_hrec_body').innerHTML='<p style="color:var(--gray)">Não encontrado.</p>';return;}
+      var eventos=[];
+      if(r.data_entrada)eventos.push({data:r.data_entrada,txt:'Protocolo registrado',cor:'#c9a84c',
+        sub:(r.secretaria||'')+(r.portador?' — '+r.portador:'')});
+      if(r.data_entrega)eventos.push({data:r.data_entrega,txt:'Entregue ao destinatário',cor:'#4caf82'});
+      if(r.demanda_id)eventos.push({data:r.data_entrada,txt:'Demanda criada a partir deste protocolo',cor:'#4a90d9'});
+      // Load anexos
+      fetch(SBU+'/rest/v1/anexos?referencia_id=eq.'+id+'&order=created_at.asc',{headers:{"apikey":SBK,"Authorization":"Bearer "+SBK}})
+        .then(function(r2){return r2.json();})
+        .then(function(docs){
+          docs.forEach(function(d){
+            eventos.push({data:d.created_at,txt:'Documento: '+(d.nome||d.url.split('/').pop()),cor:'#e09440',url:d.url});
+          });
+          eventos.sort(function(a,b){return new Date(a.data)-new Date(b.data);});
+          var lst=document.getElementById('_hrec_body');if(!lst)return;
+          if(!eventos.length){lst.innerHTML='<p style="color:var(--gray);text-align:center;padding:20px">Nenhum evento registrado.</p>';return;}
+          lst.innerHTML='<div style="padding-left:16px">'+
+            eventos.map(function(e){
+              var d=new Date(e.data);
+              var ds=isNaN(d.getTime())?String(e.data).slice(0,10):(d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
+              return '<div style="position:relative;padding-bottom:16px;padding-left:16px;border-left:2px solid rgba(255,255,255,.1)">'+
+                '<div style="position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:'+e.cor+'"></div>'+
+                '<div style="font-size:10px;color:var(--gray)">'+ds+'</div>'+
+                '<div style="font-size:13px;font-weight:500">'+e.txt+'</div>'+
+                (e.sub?'<div style="font-size:11px;color:var(--gray)">'+e.sub+'</div>':'')+
+                (e.url?'<a href="'+e.url+'" target="_blank" style="font-size:11px;color:#4a90d9">Abrir documento</a>':'')+
+                '</div>';
+            }).join('')+'</div>';
+        });
     });
 }
 
