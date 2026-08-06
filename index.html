@@ -945,44 +945,7 @@ function calcPrazoSancao(dataRetorno){
 function oUploadPrj(id,tipo){var label=tipo==='lei'?'Lei Sancionada':'Projeto de Lei';sM('<div class="md"><div class="mh"><h3>Upload &#8212; '+label+'</h3><button class="mx" onclick="cM()">x</button></div>'+'<div class="mb">'+(tipo==='lei'?'<div style="margin-bottom:10px"><label style="font-size:11px;color:var(--gray)">Nº da Lei</label><input class="ii" id="_prj_nlei" placeholder="Ex: 2.847/2026" style="margin-top:4px;width:100%"></div>':'')+'<div><label style="font-size:11px;color:var(--gray)">Arquivo PDF</label><input class="ii" type="file" id="_prj_file" accept=".pdf,.doc,.docx" style="margin-top:4px;width:100%"></div>'+'</div><div class="mf"><button class="bn bs" onclick="cM()">Cancelar</button>'+'<button class="bn bp" data-id="'+id+'" data-tipo="'+tipo+'" onclick="salvarUploadPrj(this.dataset.id,this.dataset.tipo)">Salvar</button></div></div>');}
 async function salvarUploadPrj(id,tipo){var fi=document.getElementById('_prj_file');var nlei=document.getElementById('_prj_nlei');if(!fi||!fi.files.length){ntf('Selecione um arquivo.');return;}var f=fi.files[0];ntf('Enviando...');var path='projetos_lei/'+id+'/'+tipo+'_'+Date.now()+'_'+f.name.replace(/[^a-zA-Z0-9._-]/g,'_');var up=await SB.storage.from('documentos').upload(path,f,{upsert:true});if(up.error){ntf('Erro: '+up.error.message,'#e05c5c');return;}var url=SB.storage.from('documentos').getPublicUrl(path).data.publicUrl;var upd={};if(tipo==='lei'){  upd.url_lei=url;upd.status='sancionado';  if(nlei&&nlei.value.trim())upd.numero_lei=nlei.value.trim();} else {  upd.url_projeto=url;}var{error}=await SB.from('projetos_lei').update(upd).eq('id',id);if(error){ntf('Erro: '+error.message,'#e05c5c');return;}ntf(tipo==='lei'?'Lei salva!':'Projeto salvo!');cM();await lA();rPrjExtra(document.getElementById('ct'));}
 
-async function oTfPrj(id){
-  var row=id?(D.pl||[]).find(function(r){return r.id===id;}):null;
-  var r=row||{};
-  var opts=['em_elaboracao','enviado_camara','aprovado','sancionado','vetado','arquivado'];
-  var selOpts=opts.map(function(o){
-    return '<option value="'+o+'"'+(r.status===o?' selected':'')+'>'+o.replace(/_/g,' ')+'</option>';
-  }).join('');
-  sM('<div class="md" style="max-width:640px"><div class="mh"><h3>'+(id?'Editar':'Novo')+'  &mdash; Projeto de Lei</h3><button class="mx" onclick="cM()">x</button></div>'+
-    '<div class="mb"><div class="fr">'+
-      '<div class="fl"><label>N\u00ba Interno (PGM) *</label><input class="ii" id="_prj_npgm" value="'+(r.numero_pgm||r.numero||'')+'"></div>'+
-      '<div class="fl"><label>N\u00ba da C\u00e2mara</label><input class="ii" id="_prj_ncam" value="'+(r.numero_camara||'')+'"></div>'+
-      '<div class="fl"><label>Autor</label><input class="ii" id="_prj_autor" value="'+(r.autor||'')+'"></div>'+
-      '<div class="fl"><label>Status</label><select class="ii" id="_prj_status">'+selOpts+'</select></div>'+
-      '<div class="fl" style="grid-column:1/-1"><label>Ementa / Tema *</label><textarea class="ii" id="_prj_ementa" rows="3" style="width:100%;resize:vertical">'+(r.ementa||'')+'</textarea></div>'+
-      '<div class="fl"><label>Data de Envio \u00e0 C\u00e2mara</label><input class="ii" type="date" id="_prj_envio" value="'+(r.data_envio_camara||'')+'"></div>'+
-      '<div class="fl"><label>Data de Retorno (Aprovado)</label><input class="ii" type="date" id="_prj_retorno" value="'+(r.data_retorno||'')+'"></div>'+
-      '<div class="fl"><label>N\u00ba da Lei (ap\u00f3s san\u00e7\u00e3o)</label><input class="ii" id="_prj_nlei" value="'+(r.numero_lei||'')+'"></div>'+
-      '<div class="fl"><label>Observa\u00e7\u00f5es</label><textarea class="ii" id="_prj_obs" rows="2" style="width:100%;resize:vertical">'+(r.obs||'')+'</textarea></div>'+
-    '</div>'+
-    '<div style="margin-top:14px;padding:12px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid rgba(255,255,255,.08)">'+
-      '<div style="font-size:11px;color:#c9a84c;font-weight:700;text-transform:uppercase;margin-bottom:10px">&#128229; Documentos</div>'+
-      '<div class="fr">'+
-        '<div class="fl" style="grid-column:1/-1">'+
-          '<label style="font-size:11px;color:var(--gray)">Arquivo do Projeto (PDF/DOCX)</label>'+
-          '<input class="ii" type="file" id="_prj_fproj" accept=".pdf,.doc,.docx" style="margin-top:4px">'+
-          (r.url_projeto?'<a href="'+r.url_projeto+'" target="_blank" style="font-size:10px;color:#c9a84c;display:block;margin-top:4px">Projeto atual: clique para abrir</a>':'')+
-        '</div>'+
-        '<div class="fl" style="grid-column:1/-1">'+
-          '<label style="font-size:11px;color:var(--gray)">Arquivo da Lei Sancionada (PDF)</label>'+
-          '<input class="ii" type="file" id="_prj_flei" accept=".pdf,.doc,.docx" style="margin-top:4px">'+
-          (r.url_lei?'<a href="'+r.url_lei+'" target="_blank" style="font-size:10px;color:#4caf82;display:block;margin-top:4px">Lei atual: clique para abrir</a>':'')+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '</div>'+
-    '<div class="mf"><button class="bn bs" onclick="cM()">Cancelar</button>'+
-    '<button class="bn bp" data-id="'+(id||'')+'" onclick="salvarPrj(this.dataset.id)">Salvar</button></div></div>');
-}
+
 async function salvarPrj(id){
   var npgm=document.getElementById('_prj_npgm').value.trim();
   var ementa=document.getElementById('_prj_ementa').value.trim();
