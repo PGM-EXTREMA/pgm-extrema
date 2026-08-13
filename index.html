@@ -222,8 +222,9 @@ async function lA(){
     SB.from("oficios").select("*").order("created_at",{ascending:false}),
     SB.from("pae").select("*").order("created_at",{ascending:false}),
     SB.from("projetos_lei").select("*").order("created_at",{ascending:false}),
+    SB.from("anexos").select("*").order("created_at",{ascending:false})
   ]);
-  D={p:p.data||[],d:d.data||[],u:u.data||[],j:j.data||[],l:l.data||[],c:c.data||[],pr:pr.data||[],o:o.data||[],ae:ae.data||[],pl:pl.data||[]}
+  D={p:p.data||[],d:d.data||[],u:u.data||[],j:j.data||[],l:l.data||[],c:c.data||[],pr:pr.data||[],o:o.data||[],ae:ae.data||[],pl:pl.data||[],anx:anx.data||[]}
 }
 async function sA(){await lA();hL();document.getElementById("ls").classList.add("h");document.getElementById("app").classList.remove("h");const u=S.d;document.getElementById("un").textContent=u.nome||u.email;document.getElementById("ur").textContent=u.cargo||"PGM";const av=document.getElementById("ua");av.textContent=ii(u.nome||u.email);av.style.background=gc(u.nome);bN();// Check for new demandas assigned to this user since last login
 const isPGM2=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
