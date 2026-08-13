@@ -224,7 +224,6 @@ async function lA(){
     SB.from("projetos_lei").select("*").order("created_at",{ascending:false}),
   ]);
   D={p:p.data||[],d:d.data||[],u:u.data||[],j:j.data||[],l:l.data||[],c:c.data||[],pr:pr.data||[],o:o.data||[],ae:ae.data||[],pl:pl.data||[],anx:[]};
-  try{const _anx=await SB.from("anexos").select("*").limit(500);D.anx=_anx.data||[];}catch(e){D.anx=[];}
 }
 async function sA(){await lA();hL();document.getElementById("ls").classList.add("h");document.getElementById("app").classList.remove("h");const u=S.d;document.getElementById("un").textContent=u.nome||u.email;document.getElementById("ur").textContent=u.cargo||"PGM";const av=document.getElementById("ua");av.textContent=ii(u.nome||u.email);av.style.background=gc(u.nome);bN();// Check for new demandas assigned to this user since last login
 const isPGM2=S.d&&(S.d.role==="procurador"||S.d.role==="pgm");
@@ -666,11 +665,15 @@ async function rRecibo(el){el.innerHTML="<div class=\"tb\"><div><h2>Protocolo Fi
 const allIds=(lista||[]).map(x=>x.id);
 let anexosPorRecibo={};
 if(allIds.length>0){
-  const{data:allAnx}=await SB.from("anexos").select("*").in("referencia_id",allIds).eq("referencia_tipo","recibo");
-  (allAnx||[]).forEach(a=>{
-    if(!anexosPorRecibo[a.referencia_id]) anexosPorRecibo[a.referencia_id]=[];
-    anexosPorRecibo[a.referencia_id].push(a);
-  });
+  // Batch in groups of 50 to avoid URL length limit
+  for(let i=0;i<allIds.length;i+=50){
+    const batch=allIds.slice(i,i+50);
+    const{data:bAnx}=await SB.from("anexos").select("*").in("referencia_id",batch).eq("referencia_tipo","recibo");
+    (bAnx||[]).forEach(a=>{
+      if(!anexosPorRecibo[a.referencia_id]) anexosPorRecibo[a.referencia_id]=[];
+      anexosPorRecibo[a.referencia_id].push(a);
+    });
+  }
 }
 const rows=(lista||[]).length===0?"<tr><td colspan=\"6\" class=\"e2\">Nenhum protocolo registrado.</td></tr>":(lista||[]).map(function(r2){
 const anx2=anexosPorRecibo[r2.id]||[];
