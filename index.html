@@ -211,7 +211,7 @@ async function dL(){
 }
 function dLo(){S=null;localStorage.removeItem("_pgms");location.reload()}
 async function lA(){
-  const[p,d,u,j,l,c,pr,o,ae,pl]=await Promise.all([
+  const[p,d,u,j,l,c,pr,o,ae,pl,anx]=await Promise.all([
     SB.from("protocolos").select("*,secretaria:secretarias(nome,sigla)").order("created_at",{ascending:false}),
     SB.from("demandas").select("*").order("created_at",{ascending:false}),
     SB.from("usuarios_pgm").select("*"),
