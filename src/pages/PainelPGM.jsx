@@ -174,7 +174,7 @@ function Demandas({data,onUpdate,showNotify,st}){
   const stD=(d)=>{if(d.status==='concluida')return'concluida';const dl=daysLeft(d.prazo);if(dl!==null&&dl<0)return'vencida';return d.status||'pendente'}
   const sMap={pendente:{l:'Pendente',c:'#c9a84c'},andamento:{l:'Andamento',c:'#4a90d9'},concluida:{l:'Concluida',c:'#4caf82'},vencida:{l:'Vencida',c:'#e05c5c'}}
   const lista=filtro==='todas'?data.demandas:data.demandas.filter(d=>stD(d)===filtro)
-  async function save(){if(!form.titulo?.trim())return;if(form.id)await atualizarDemanda(form.id,form);else await criarDemanda({...form,status:'pendente'});showNotify('Salvo!');setModal(null);onUpdate()}
+  async function save(){if(!form.titulo?.trim())return;if(!form.tipo){showNotify('Selecione o Tipo');return}if(form.id)await atualizarDemanda(form.id,form);else await criarDemanda({...form,status:'pendente'});showNotify('Salvo!');setModal(null);onUpdate()}
   async function del(id){if(!window.confirm('Excluir?'))return;await excluirDemanda(id);showNotify('Excluido');onUpdate()}
   async function ok(d){await atualizarDemanda(d.id,{status:'concluida',concluida_em:new Date().toISOString()});showNotify('Concluida!');onUpdate()}
   return(
@@ -208,7 +208,7 @@ function Demandas({data,onUpdate,showNotify,st}){
         <div style={{gridColumn:'1/-1'}}><label style={st.label}>Titulo</label><input value={form.titulo||''} onChange={e=>setForm({...form,titulo:e.target.value})} style={st.field}/></div>
         <div><label style={st.label}>Assessor</label><select value={form.assessor_id||''} onChange={e=>setForm({...form,assessor_id:e.target.value})} style={st.field}><option value="">-</option>{data.usuarios.map(u=><option key={u.id} value={u.id}>{u.nome}</option>)}</select></div>
         <div><label style={st.label}>Prazo</label><input type="date" value={form.prazo||''} onChange={e=>setForm({...form,prazo:e.target.value})} style={st.field}/></div>
-        <div><label style={st.label}>Tipo</label><select value={form.tipo||''} onChange={e=>setForm({...form,tipo:e.target.value})} style={st.field}><option value="">-</option>{['Parecer','Contrato','Licitacao','Judicial','Outro'].map(t=><option key={t}>{t}</option>)}</select></div>
+       <div><label style={st.label}>Tipo</label><select value={form.tipo||''} onChange={e=>setForm({...form,tipo:e.target.value})} style={st.field}><option value="">-</option>{[{v:'portaria',l:'Portaria'},{v:'parecer',l:'Parecer'},{v:'oficio_despacho',l:'Ofício/Despacho'},{v:'pae',l:'PAE'},{v:'outro',l:'Outro'}].map(t=><option key={t.v} value={t.v}>{t.l}</option>)}</select></div>
         <div><label style={st.label}>Prioridade</label><select value={form.prioridade||'normal'} onChange={e=>setForm({...form,prioridade:e.target.value})} style={st.field}><option value="normal">Normal</option><option value="alta">Alta</option><option value="urgente">Urgente</option></select></div>
       </div></div><div style={st.mF}><button onClick={()=>setModal(null)} style={st.btnG}>Cancelar</button><button onClick={save} style={st.btnP}>Salvar</button></div></div></div>}
     </div>
