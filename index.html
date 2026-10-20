@@ -702,7 +702,7 @@ async function upSign2(demId){
   ntf("Documento assinado disponÃ­vel para o assessor!");
   rAssinar(document.getElementById("ct"));
 }
-async function rRecibo(el){el.innerHTML="<div class=\"tb\"><div><h2>Protocolo Fisico</h2><p>Documentos fisicos recebidos na PGM</p></div><button class=\"bn bp\" onclick=\"novoRecibo()\">+ Registrar Entrada</button></div><div class=\"pb\"><div class=\"sp\" style=\"margin:40px auto\"></div></div>";const{data:lista}=await SB.from("recibos_fisicos").select("*");// Fetch annexes for all records in one query
+async function rRecibo(el){el.innerHTML="<div class=\"tb\"><div><h2>Protocolo Fisico</h2><p>Documentos fisicos recebidos na PGM</p></div><button class=\"bn bp\" onclick=\"novoRecibo()\">+ Registrar Entrada</button></div><div class=\"pb\"><div class=\"sp\" style=\"margin:40px auto\"></div></div>";const{data:lista}=await SB.from("recibos_fisicos").select("*").order("numero",{ascending:false});// Fetch annexes for all records in one query
 const allIds=(lista||[]).map(x=>x.id);
 let anexosPorRecibo={};
 if(allIds.length>0){
